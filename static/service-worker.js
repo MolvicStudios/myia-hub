@@ -3,14 +3,15 @@
 /**
  * Service Worker for MyIA Hub PWA.
  * - Versioned cache with automatic cleanup of old versions
- * - Cache-first with stale-while-revalidate for static assets
+ * - Cache-first for immutable hashed assets (/_app/)
+ * - Stale-while-revalidate for other static assets
  * - Network-first with offline fallback for pages
- * - Immutable hashed assets (/_app/) cached permanently
+ * - Offline page served from cache when network is unavailable
  */
 
-const CACHE_VERSION = 2;
+const CACHE_VERSION = 3;
 const CACHE_NAME = `myia-hub-v${CACHE_VERSION}`;
-const STATIC_ASSETS = ['/', '/manifest.json', '/favicon.png', '/icon-192.png', '/icon-512.png'];
+const STATIC_ASSETS = ['/', '/manifest.json', '/favicon.png', '/icon-192.png', '/icon-512.png', '/offline.html'];
 
 self.addEventListener('install', (event) => {
 	event.waitUntil(
@@ -79,6 +80,10 @@ self.addEventListener('fetch', (event) => {
 				}
 				return response;
 			})
-			.catch(() => caches.match(request).then((cached) => cached || caches.match('/')))
+			.catch(() =>
+				caches.match(request)
+					.then((cached) => cached || caches.match('/offline.html'))
+					.then((page) => page || caches.match('/'))
+			)
 	);
 });

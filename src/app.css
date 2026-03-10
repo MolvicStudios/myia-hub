@@ -169,14 +169,50 @@ html.nord .glass { background: rgba(46, 52, 64, 0.8); }
 
 /* ===== Markdown body styles ===== */
 .markdown-body .md-code-block {
-	margin: 0.5rem 0;
+	margin: 0;
 	padding: 0.75rem;
 	background: #0f172a;
-	border-radius: 0.5rem;
+	border-radius: 0 0 0.5rem 0.5rem;
 	overflow-x: auto;
 	font-size: 0.75rem;
 	font-family: ui-monospace, 'Fira Code', monospace;
 	border: 1px solid #334155;
+	border-top: none;
+}
+.markdown-body .md-code-wrapper {
+	margin: 0.5rem 0;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+.markdown-body .md-code-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.3rem 0.75rem;
+	background: #1e293b;
+	border: 1px solid #334155;
+	border-bottom: none;
+	border-radius: 0.5rem 0.5rem 0 0;
+}
+.markdown-body .md-code-lang {
+	font-size: 0.65rem;
+	color: #94a3b8;
+	text-transform: uppercase;
+	font-family: ui-monospace, 'Fira Code', monospace;
+}
+.markdown-body .md-copy-btn {
+	font-size: 0.65rem;
+	color: #94a3b8;
+	background: transparent;
+	border: 1px solid #475569;
+	border-radius: 0.25rem;
+	padding: 0.15rem 0.5rem;
+	cursor: pointer;
+	transition: all 150ms;
+}
+.markdown-body .md-copy-btn:hover {
+	color: #e2e8f0;
+	background: #334155;
 }
 .markdown-body .md-inline-code {
 	background: #1e293b;

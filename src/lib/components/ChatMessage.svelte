@@ -23,6 +23,19 @@
 
 	/** Cost estimate for assistant messages */
 	let cost = $derived(!isUser && message.model ? formatCost(estimateCost(message.model, 0, tokens)) : '');
+
+	/** Handle clicks on copy buttons inside rendered markdown */
+	function handleBubbleClick(e: MouseEvent) {
+		const target = e.target as HTMLElement;
+		if (!target.classList.contains('md-copy-btn')) return;
+		const code = target.getAttribute('data-code') ?? '';
+		// Decode HTML entities back to original text
+		const textarea = document.createElement('textarea');
+		textarea.innerHTML = code;
+		navigator.clipboard.writeText(textarea.value);
+		target.textContent = '✓ Copiado';
+		setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+	}
 </script>
 
 <div
@@ -45,10 +58,12 @@
 		{/if}
 
 		<!-- Bubble -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div
 			class="rounded-2xl px-4 py-3 text-sm leading-relaxed break-words {isUser
 				? 'bg-blue-600 text-white rounded-br-md'
 				: 'bg-slate-800 text-slate-100 rounded-bl-md border border-slate-700 markdown-body'}"
+			onclick={handleBubbleClick}
 		>
 			{#if isUser}
 				<p class="whitespace-pre-wrap">{message.content}</p>

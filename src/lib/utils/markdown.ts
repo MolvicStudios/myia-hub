@@ -9,7 +9,8 @@ export function renderMarkdown(text: string): string {
 
 	// Code blocks (```lang\ncode```)
 	html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_match, lang: string, code: string) => {
-		return `<pre class="md-code-block"><code class="language-${escapeHtml(lang || 'text')}">${escapeHtml(code)}</code></pre>`;
+		const langLabel = lang || 'text';
+		return `<div class="md-code-wrapper"><div class="md-code-header"><span class="md-code-lang">${escapeHtml(langLabel)}</span><button type="button" class="md-copy-btn" data-code="${escapeHtml(code).replace(/"/g, '&quot;')}">Copiar</button></div><pre class="md-code-block"><code class="language-${escapeHtml(langLabel)}">${escapeHtml(code)}</code></pre></div>`;
 	});
 
 	// Inline code

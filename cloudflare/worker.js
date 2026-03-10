@@ -2,6 +2,7 @@
  * Cloudflare Worker — API proxy for MyIA Hub.
  * Proxies requests to AI model APIs, adding server-side API keys if configured.
  * This keeps user API keys safe and allows optional server-managed keys.
+ * Includes per-IP rate limiting.
  */
 
 const ALLOWED_ORIGINS = [
@@ -10,6 +11,28 @@ const ALLOWED_ORIGINS = [
 	'http://localhost:5173',
 	'http://localhost:4173'
 ];
+
+/* ── Rate limiting (in-memory, per isolate) ── */
+const RATE_LIMIT_WINDOW = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 30;        // max requests per window
+const ipHits = new Map();         // ip → { count, resetAt }
+
+function isRateLimited(ip) {
+	const now = Date.now();
+	let entry = ipHits.get(ip);
+	if (!entry || now > entry.resetAt) {
+		entry = { count: 0, resetAt: now + RATE_LIMIT_WINDOW };
+	}
+	entry.count++;
+	ipHits.set(ip, entry);
+	// Periodically clean old entries
+	if (ipHits.size > 5000) {
+		for (const [k, v] of ipHits) {
+			if (now > v.resetAt) ipHits.delete(k);
+		}
+	}
+	return entry.count > RATE_LIMIT_MAX;
+}
 
 function getCorsHeaders(request) {
 	const origin = request.headers.get('Origin') || '';
@@ -41,6 +64,15 @@ export default {
 
 		if (request.method !== 'POST') {
 			return new Response('Method not allowed', { status: 405, headers: getCorsHeaders(request) });
+		}
+
+		// Rate limiting
+		const clientIp = request.headers.get('cf-connecting-ip') || 'unknown';
+		if (isRateLimited(clientIp)) {
+			return new Response(JSON.stringify({ error: 'Demasiadas peticiones. Espera un minuto.' }), {
+				status: 429,
+				headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json', 'Retry-After': '60' }
+			});
 		}
 
 		const url = new URL(request.url);

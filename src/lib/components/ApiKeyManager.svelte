@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { apiKeys, saveApiKey, removeApiKey, validateKeyFormat, getApiKey } from '$lib/stores/apiKeyStore';
+	import { WORKER_PROXY } from '$lib/config';
 	import type { ModelProvider } from '$lib/types';
 
 	const ALL_PROVIDERS: { id: ModelProvider; name: string; color: string; placeholder: string }[] = [
@@ -17,6 +18,7 @@
 
 	let editingProvider = $state<ModelProvider | null>(null);
 	let keyInput = $state('');
+	let keyError = $state('');
 	let showKey = $state<Record<string, boolean>>({});
 
 	function startEdit(provider: ModelProvider) {
@@ -26,16 +28,22 @@
 
 	function save() {
 		if (!editingProvider) return;
-		if (keyInput.trim()) {
-			saveApiKey(editingProvider, keyInput.trim());
+		const trimmed = keyInput.trim();
+		if (!trimmed) return;
+		if (!validateKeyFormat(editingProvider, trimmed)) {
+			keyError = 'Formato de clave no válido. Revisa el prefijo y longitud.';
+			return;
 		}
+		saveApiKey(editingProvider, trimmed);
 		editingProvider = null;
 		keyInput = '';
+		keyError = '';
 	}
 
 	function cancel() {
 		editingProvider = null;
 		keyInput = '';
+		keyError = '';
 	}
 
 	function remove(provider: ModelProvider) {
@@ -52,6 +60,57 @@
 
 	function isValid(provider: ModelProvider): boolean {
 		return $apiKeys.find((k) => k.provider === provider)?.valid ?? false;
+	}
+
+	let verifyStatus = $state<Record<string, 'idle' | 'checking' | 'ok' | 'fail'>>({});
+	let verifyMsg = $state<Record<string, string>>({});
+
+	async function verifyKey(provider: ModelProvider) {
+		const key = getApiKey(provider);
+		if (!key) return;
+		verifyStatus[provider] = 'checking';
+		verifyMsg[provider] = '';
+		try {
+			// Minimal request — send a tiny message to verify auth
+			const body: Record<string, unknown> = {
+				model: provider === 'anthropic' ? 'claude-3-5-sonnet-20241022' : provider === 'gemini' ? 'gemini-2.0-flash' : provider === 'groq' ? 'llama-3.3-70b-versatile' : provider === 'openrouter' ? 'openrouter/auto' : provider === 'mistral' ? 'mistral-large-latest' : provider === 'deepseek' ? 'deepseek-chat' : 'gpt-4o',
+				messages: [{ role: 'user', content: 'test' }],
+				max_tokens: 1,
+				stream: false
+			};
+			if (provider === 'anthropic') {
+				Object.assign(body, { system: '', max_tokens: 1 });
+			}
+			const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+			if (provider === 'anthropic') {
+				headers['x-api-key'] = key;
+			} else {
+				headers['Authorization'] = `Bearer ${key}`;
+			}
+			const res = await fetch(`${WORKER_PROXY}/api/${provider}`, {
+				method: 'POST',
+				headers,
+				body: JSON.stringify(body)
+			});
+			if (res.ok || res.status === 200) {
+				verifyStatus[provider] = 'ok';
+				verifyMsg[provider] = '✓ Clave válida';
+			} else if (res.status === 401 || res.status === 403) {
+				verifyStatus[provider] = 'fail';
+				verifyMsg[provider] = 'Clave inválida o sin permisos';
+			} else if (res.status === 429) {
+				// Rate limited means the key is valid
+				verifyStatus[provider] = 'ok';
+				verifyMsg[provider] = '✓ Clave válida (rate-limited)';
+			} else {
+				verifyStatus[provider] = 'ok';
+				verifyMsg[provider] = `✓ Respuesta ${res.status} (clave aceptada)`;
+			}
+		} catch {
+			verifyStatus[provider] = 'fail';
+			verifyMsg[provider] = 'Error de conexión';
+		}
+		setTimeout(() => { verifyStatus[provider] = 'idle'; verifyMsg[provider] = ''; }, 5000);
 	}
 </script>
 
@@ -73,6 +132,24 @@
 
 				<div class="flex items-center gap-1">
 					{#if hasKey(prov.id)}
+						<button
+							type="button"
+							aria-label="Verificar clave de {prov.name}"
+							class="p-1 text-slate-500 hover:text-green-400 transition-colors {verifyStatus[prov.id] === 'checking' ? 'animate-pulse' : ''}"
+							onclick={() => verifyKey(prov.id)}
+							disabled={verifyStatus[prov.id] === 'checking'}
+							title="Verificar clave"
+						>
+							{#if verifyStatus[prov.id] === 'ok'}
+								<span class="text-green-400 text-xs">✓</span>
+							{:else if verifyStatus[prov.id] === 'fail'}
+								<span class="text-red-400 text-xs">✗</span>
+							{:else}
+								<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>
+							{/if}
+						</button>
 						<button
 							type="button"
 							aria-label="{showKey[prov.id] ? 'Ocultar' : 'Mostrar'} clave de {prov.name}"
@@ -119,30 +196,41 @@
 				</div>
 			{/if}
 
+			<!-- Verify result -->
+			{#if verifyMsg[prov.id]}
+				<p class="mt-1 text-xs {verifyStatus[prov.id] === 'ok' ? 'text-green-400' : 'text-red-400'} px-1">{verifyMsg[prov.id]}</p>
+			{/if}
+
 			<!-- Edit form -->
 			{#if editingProvider === prov.id}
-				<div class="mt-3 flex gap-2 animate-fade-in">
-					<input
-						type="password"
-						bind:value={keyInput}
-						placeholder={prov.placeholder}
-						aria-label="Clave API de {prov.name}"
-						class="flex-1 bg-slate-900 rounded-lg px-3 py-2 text-sm border border-slate-600 focus:border-blue-500 focus:outline-none transition-colors font-mono"
-					/>
-					<button
-						type="button"
-						class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors active:scale-95"
-						onclick={save}
-					>
-						Guardar
-					</button>
-					<button
-						type="button"
-						class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
-						onclick={cancel}
-					>
-						Cancelar
-					</button>
+				<div class="mt-3 space-y-1 animate-fade-in">
+					<div class="flex gap-2">
+						<input
+							type="password"
+							bind:value={keyInput}
+							placeholder={prov.placeholder}
+							aria-label="Clave API de {prov.name}"
+							class="flex-1 bg-slate-900 rounded-lg px-3 py-2 text-sm border {keyError ? 'border-red-500' : 'border-slate-600'} focus:border-blue-500 focus:outline-none transition-colors font-mono"
+							oninput={() => (keyError = '')}
+						/>
+						<button
+							type="button"
+							class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors active:scale-95"
+							onclick={save}
+						>
+							Guardar
+						</button>
+						<button
+							type="button"
+							class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
+							onclick={cancel}
+						>
+							Cancelar
+						</button>
+					</div>
+					{#if keyError}
+						<p class="text-xs text-red-400 px-1">{keyError}</p>
+					{/if}
 				</div>
 			{/if}
 		</div>

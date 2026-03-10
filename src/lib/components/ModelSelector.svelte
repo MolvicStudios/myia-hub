@@ -68,7 +68,12 @@
 	}
 
 	const SPEED_LABEL = { fast: '⚡ Rápido', medium: '🔄 Medio', slow: '🐢 Lento' };
-	const COST_LABEL = { free: '🆓', low: '💲', medium: '💲💲', high: '💲💲💲' };
+	const COST_LABEL: Record<string, string> = {
+		free: '🆓 Gratis',
+		low: '💲 ~$0.001/msg',
+		medium: '💲💲 ~$0.01/msg',
+		high: '💲💲💲 ~$0.05/msg'
+	};
 </script>
 
 <div class="relative">

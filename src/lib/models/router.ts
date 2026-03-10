@@ -1,34 +1,35 @@
 /**
  * Model Router — central dispatch for all model requests.
  * Resolves the correct client for a provider and forwards the request.
+ * Providers are lazily loaded on first use to reduce initial bundle size.
  */
 import type { ModelProvider, ModelRequestPayload, ModelResponse } from '$lib/types';
 import type { ModelClient } from './base';
-import { openaiClient } from './openai';
-import { anthropicClient } from './anthropic';
-import { geminiClient } from './gemini';
-import { mistralClient } from './mistral';
-import { deepseekClient } from './deepseek';
-import { groqClient } from './groq';
-import { openrouterClient } from './openrouter';
-import { ollamaClient } from './ollama';
 import { getApiKey } from '$lib/stores/apiKeyStore';
 
-const clients: Record<ModelProvider, ModelClient> = {
-	openai: openaiClient,
-	anthropic: anthropicClient,
-	gemini: geminiClient,
-	mistral: mistralClient,
-	deepseek: deepseekClient,
-	groq: groqClient,
-	openrouter: openrouterClient,
-	ollama: ollamaClient
-};
+const clientCache: Partial<Record<ModelProvider, ModelClient>> = {};
+
+/** Lazily load and cache the provider client */
+async function getClient(provider: ModelProvider): Promise<ModelClient> {
+	if (clientCache[provider]) return clientCache[provider]!;
+	let mod: { [key: string]: ModelClient };
+	switch (provider) {
+		case 'openai':     mod = await import('./openai'); clientCache[provider] = mod.openaiClient; break;
+		case 'anthropic':  mod = await import('./anthropic'); clientCache[provider] = mod.anthropicClient; break;
+		case 'gemini':     mod = await import('./gemini'); clientCache[provider] = mod.geminiClient; break;
+		case 'mistral':    mod = await import('./mistral'); clientCache[provider] = mod.mistralClient; break;
+		case 'deepseek':   mod = await import('./deepseek'); clientCache[provider] = mod.deepseekClient; break;
+		case 'groq':       mod = await import('./groq'); clientCache[provider] = mod.groqClient; break;
+		case 'openrouter': mod = await import('./openrouter'); clientCache[provider] = mod.openrouterClient; break;
+		case 'ollama':     mod = await import('./ollama'); clientCache[provider] = mod.ollamaClient; break;
+		default: throw new Error(`Proveedor desconocido: ${provider}`);
+	}
+	return clientCache[provider]!;
+}
 
 /** Send a message to the appropriate model */
 export async function routeMessage(payload: ModelRequestPayload): Promise<ModelResponse> {
-	const client = clients[payload.provider];
-	if (!client) throw new Error(`Proveedor desconocido: ${payload.provider}`);
+	const client = await getClient(payload.provider);
 
 	const apiKey = getApiKey(payload.provider) ?? '';
 	if (!apiKey && payload.provider !== 'ollama') {
@@ -58,8 +59,7 @@ export async function routeMessageStream(
 	abortActiveRequest();
 	activeAbortController = new AbortController();
 
-	const client = clients[payload.provider];
-	if (!client) throw new Error(`Proveedor desconocido: ${payload.provider}`);
+	const client = await getClient(payload.provider);
 
 	const apiKey = getApiKey(payload.provider) ?? '';
 	if (!apiKey && payload.provider !== 'ollama') {
@@ -84,8 +84,7 @@ export async function routeMessageStreamIndependent(
 	onChunk: (text: string) => void,
 	externalSignal?: AbortSignal
 ): Promise<ModelResponse> {
-	const client = clients[payload.provider];
-	if (!client) throw new Error(`Proveedor desconocido: ${payload.provider}`);
+	const client = await getClient(payload.provider);
 
 	const apiKey = getApiKey(payload.provider) ?? '';
 	if (!apiKey && payload.provider !== 'ollama') {
@@ -105,9 +104,4 @@ export async function routeMessageStreamIndependent(
 	} finally {
 		// no shared state to clean up
 	}
-}
-
-/** Get an available client */
-export function getClient(provider: ModelProvider): ModelClient {
-	return clients[provider];
 }

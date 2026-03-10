@@ -31,6 +31,18 @@ function friendlyError(err: unknown): string {
 	return msg;
 }
 
+/** Check if error is retryable (server/rate errors, not auth/client errors) */
+function isRetryable(err: unknown): boolean {
+	const msg = err instanceof Error ? err.message : String(err);
+	return /429|503|500|rate|Service Unavailable|Internal Server/.test(msg)
+		&& !msg.includes('abort') && !msg.includes('AbortError');
+}
+
+/** Sleep helper */
+function sleep(ms: number): Promise<void> {
+	return new Promise((r) => setTimeout(r, ms));
+}
+
 interface SendParams {
 	text: string;
 	files: FileAttachment[];
@@ -96,13 +108,30 @@ export async function handleSendMessage(data: SendParams) {
 
 			avatarState.set('typing');
 
-			await routeMessageStream(
-				{ model: target.model, provider, messages: history, attachments, stream: true },
-				(partial) => {
-					updateLastAssistantMessage(partial);
-					data.scrollToBottom();
+			// Retry with exponential backoff for transient errors (429, 500, 503)
+			const MAX_RETRIES = 2;
+			let lastErr: unknown;
+			for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+				try {
+					await routeMessageStream(
+						{ model: target.model, provider, messages: history, attachments, stream: true },
+						(partial) => {
+							updateLastAssistantMessage(partial);
+							data.scrollToBottom();
+						}
+					);
+					lastErr = null;
+					break;
+				} catch (err) {
+					lastErr = err;
+					if (attempt < MAX_RETRIES && isRetryable(err)) {
+						updateLastAssistantMessage(`⏳ Reintentando (${attempt + 1}/${MAX_RETRIES})…`);
+						await sleep(1000 * Math.pow(2, attempt)); // 1s, 2s
+						continue;
+					}
+					throw err;
 				}
-			);
+			}
 
 			avatarState.set('idle');
 
