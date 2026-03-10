@@ -1,17 +1,15 @@
 import type { ModelClient } from './base';
 import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import { WORKER_PROXY } from '$lib/config';
 
-const ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const ENDPOINT = `${WORKER_PROXY}/api/openrouter`;
 
 export const openrouterClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: buildHeaders(apiKey, {
-				'HTTP-Referer': 'https://myia-hub.pages.dev',
-				'X-Title': 'MyIA Hub'
-			}),
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
 				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
@@ -45,10 +43,7 @@ export const openrouterClient: ModelClient = {
 	): Promise<ModelResponse> {
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: buildHeaders(apiKey, {
-				'HTTP-Referer': 'https://myia-hub.pages.dev',
-				'X-Title': 'MyIA Hub'
-			}),
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
 				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),

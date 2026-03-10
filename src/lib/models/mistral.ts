@@ -1,8 +1,9 @@
 import type { ModelClient } from './base';
 import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import { WORKER_PROXY } from '$lib/config';
 
-const ENDPOINT = 'https://api.mistral.ai/v1/chat/completions';
+const ENDPOINT = `${WORKER_PROXY}/api/mistral`;
 
 export const mistralClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {

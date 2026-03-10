@@ -81,7 +81,11 @@ export default {
 
 			const targetUrl =
 				provider === 'gemini'
-					? `${PROVIDER_ENDPOINTS[provider]}/models/${JSON.parse(body).model}:generateContent?key=${encodeURIComponent(apiKey)}`
+					? (() => {
+						const parsed = JSON.parse(body);
+						const action = parsed.stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
+						return `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}:${action}?key=${encodeURIComponent(apiKey)}`;
+					})()
 					: PROVIDER_ENDPOINTS[provider];
 
 			const response = await fetch(targetUrl, {

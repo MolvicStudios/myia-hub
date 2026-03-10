@@ -1,7 +1,9 @@
 import type { ModelClient } from './base';
+import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import { WORKER_PROXY } from '$lib/config';
 
-const ENDPOINT = 'https://api.anthropic.com/v1/messages';
+const ENDPOINT = `${WORKER_PROXY}/api/anthropic`;
 
 export const anthropicClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
@@ -17,11 +19,7 @@ export const anthropicClient: ModelClient = {
 
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'x-api-key': apiKey,
-				'anthropic-version': '2023-06-01'
-			},
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify(systemMsg ? { ...body, system: systemMsg.content } : body),
 			signal
 		});
@@ -61,11 +59,7 @@ export const anthropicClient: ModelClient = {
 
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				'x-api-key': apiKey,
-				'anthropic-version': '2023-06-01'
-			},
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify(body),
 			signal
 		});

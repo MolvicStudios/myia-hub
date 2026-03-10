@@ -1,10 +1,13 @@
 import type { ModelClient } from './base';
+import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import { WORKER_PROXY } from '$lib/config';
+
+const ENDPOINT = `${WORKER_PROXY}/api/gemini`;
 
 export const geminiClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
 		const model = payload.model || 'gemini-pro';
-		const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
 		const contents = payload.messages
 			.filter((m) => m.role !== 'system')
@@ -13,10 +16,10 @@ export const geminiClient: ModelClient = {
 				parts: [{ text: m.content }]
 			}));
 
-		const res = await fetch(url, {
+		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ contents }),
+			headers: buildHeaders(apiKey),
+			body: JSON.stringify({ contents, model }),
 			signal
 		});
 
@@ -38,7 +41,6 @@ export const geminiClient: ModelClient = {
 		signal?: AbortSignal
 	): Promise<ModelResponse> {
 		const model = payload.model || 'gemini-pro';
-		const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
 
 		const contents = payload.messages
 			.filter((m) => m.role !== 'system')
@@ -47,10 +49,10 @@ export const geminiClient: ModelClient = {
 				parts: [{ text: m.content }]
 			}));
 
-		const res = await fetch(url, {
+		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ contents }),
+			headers: buildHeaders(apiKey),
+			body: JSON.stringify({ contents, model, stream: true }),
 			signal
 		});
 
