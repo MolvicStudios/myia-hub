@@ -35,9 +35,19 @@
 		}
 	});
 
-	async function scrollToBottom() {
+	let userScrolledUp = $state(false);
+
+	function handleScroll() {
+		if (!chatContainerEl) return;
+		const { scrollTop, scrollHeight, clientHeight } = chatContainerEl;
+		userScrolledUp = scrollHeight - scrollTop - clientHeight > 150;
+	}
+
+	async function scrollToBottom(force = false) {
 		await tick();
-		chatContainerEl?.scrollTo({ top: chatContainerEl.scrollHeight, behavior: 'smooth' });
+		if (chatContainerEl && (force || !userScrolledUp)) {
+			chatContainerEl.scrollTo({ top: chatContainerEl.scrollHeight, behavior: 'smooth' });
+		}
 	}
 
 	async function handleSend(data: { text: string; files: FileAttachment[]; mentions: string[] }) {
@@ -66,7 +76,7 @@
 		</div>
 
 		<!-- Messages -->
-		<div bind:this={chatContainerEl} class="flex-1 overflow-y-auto" role="log" aria-live="polite" aria-label={$i18n('chat.messages')}>
+		<div bind:this={chatContainerEl} onscroll={handleScroll} class="flex-1 overflow-y-auto" role="log" aria-live="polite" aria-label={$i18n('chat.messages')}>
 			{#if messages.length === 0}
 				<div class="flex flex-col items-center justify-center h-full text-slate-500 text-sm">
 					<Avatar model={$selectedModel} provider={$selectedProvider} state="idle" size="lg" />
@@ -95,6 +105,19 @@
 				</div>
 			{/if}
 		</div>
+
+		{#if userScrolledUp}
+			<div class="flex justify-center -mt-12 relative z-10 pointer-events-none">
+				<button
+					type="button"
+					class="pointer-events-auto px-3 py-1.5 bg-slate-700/90 hover:bg-slate-600 backdrop-blur-sm text-slate-200 text-xs rounded-full shadow-lg transition-all flex items-center gap-1.5"
+					onclick={() => scrollToBottom(true)}
+				>
+					<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+					↓
+				</button>
+			</div>
+		{/if}
 
 		<ChatInput
 			onsend={handleSend}
