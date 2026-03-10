@@ -72,7 +72,7 @@ export default {
 
 			if (provider === 'anthropic') {
 				headers['x-api-key'] = apiKey;
-				headers['anthropic-version'] = '2023-06-01';
+				headers['anthropic-version'] = '2024-10-22';
 			} else if (provider !== 'ollama') {
 				headers['Authorization'] = `Bearer ${apiKey}`;
 			}
@@ -86,8 +86,12 @@ export default {
 
 			if (provider === 'gemini') {
 				const parsed = JSON.parse(body);
-				const action = parsed.stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
-				targetUrl = `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}:${action}?key=${encodeURIComponent(apiKey)}`;
+				const base = `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}`;
+				if (parsed.stream) {
+					targetUrl = `${base}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+				} else {
+					targetUrl = `${base}:generateContent?key=${encodeURIComponent(apiKey)}`;
+				}
 				// Strip model and stream — forward only Gemini-native fields (contents, systemInstruction, generationConfig, etc.)
 				const { model: _m, stream: _s, ...geminiBody } = parsed;
 				forwardBody = JSON.stringify(geminiBody);
