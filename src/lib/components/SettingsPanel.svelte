@@ -4,9 +4,11 @@
 	import { settings, updateSetting, setTheme } from '$lib/stores/settingsStore';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
-	import { getAvailableModels, getModelDef } from '$lib/models/registry';
+	import { getAvailableModels, getModelDef, isLocalEnvironment } from '$lib/models/registry';
 	import { locale, setLocale, i18n } from '$lib/stores/i18nStore';
 	import { onMount } from 'svelte';
+
+	const showOllama = isLocalEnvironment();
 
 	interface Props {
 		open: boolean;
@@ -70,7 +72,7 @@
 		<div class="flex border-b border-slate-800" role="tablist" aria-label="Secciones de configuración">
 			{#each [
 				{ id: 'api', label: '🔑 APIs' },
-				{ id: 'ollama', label: '🦙 Ollama' },
+				...(showOllama ? [{ id: 'ollama', label: '🦙 Ollama' }] : []),
 				{ id: 'prefs', label: '⚙️ Prefs' },
 				{ id: 'memory', label: '🧠 Memoria' }
 			] as tab (tab.id)}

@@ -4,7 +4,9 @@
 	import { settings, updateSetting, toggleTheme } from '$lib/stores/settingsStore';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
-	import { getAvailableModels, getModelDef } from '$lib/models/registry';
+	import { getAvailableModels, getModelDef, isLocalEnvironment } from '$lib/models/registry';
+
+	const showOllama = isLocalEnvironment();
 
 	function handleClearMemory() {
 		if (confirm('¿Eliminar toda la memoria local? Esta acción no se puede deshacer.')) {
@@ -31,10 +33,12 @@
 		<ApiKeyManager />
 	</section>
 
-	<!-- Ollama -->
+	<!-- Ollama (only on localhost) -->
+	{#if showOllama}
 	<section>
 		<OllamaSettings />
 	</section>
+	{/if}
 
 	<!-- Preferences -->
 	<section class="space-y-4">

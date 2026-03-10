@@ -1,6 +1,14 @@
+import { browser } from '$app/environment';
 import type { ModelDef } from '$lib/types';
 import { get } from 'svelte/store';
 import { settings } from '$lib/stores/settingsStore';
+
+/** Ollama is only available on localhost (dev) due to mixed-content / CORS */
+export function isLocalEnvironment(): boolean {
+	if (!browser) return false;
+	const h = window.location.hostname;
+	return h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0';
+}
 
 /** Registry of all supported models */
 export const MODEL_REGISTRY: ModelDef[] = [
@@ -207,8 +215,9 @@ export function getProviders(): string[] {
 	return [...new Set(MODEL_REGISTRY.map((m) => m.provider))];
 }
 
-/** Get available models — filters out Ollama when disabled */
+/** Get available models — Ollama only on localhost, and only when enabled */
 export function getAvailableModels(): ModelDef[] {
+	if (!isLocalEnvironment()) return MODEL_REGISTRY.filter((m) => m.provider !== 'ollama');
 	const ollamaOn = get(settings).ollamaEnabled;
 	return ollamaOn ? MODEL_REGISTRY : MODEL_REGISTRY.filter((m) => m.provider !== 'ollama');
 }
