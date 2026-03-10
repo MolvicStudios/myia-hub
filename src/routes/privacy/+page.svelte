@@ -7,7 +7,7 @@
 	<meta name="description" content="Política de privacidad de MyIA Hub. Información sobre cómo tratamos tus datos." />
 </svelte:head>
 
-<main id="main-content" class="max-w-3xl mx-auto px-4 py-12 text-slate-300 leading-relaxed">
+<main id="main-content" class="max-w-3xl mx-auto px-4 py-12 text-slate-300 leading-relaxed overflow-y-auto h-full">
 	<a href="/" class="text-blue-400 hover:underline text-sm mb-6 inline-block">← Volver al chat</a>
 
 	<h1 class="text-3xl font-bold text-white mb-8">Política de Privacidad</h1>

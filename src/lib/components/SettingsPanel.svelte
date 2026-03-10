@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ApiKeyManager from './ApiKeyManager.svelte';
+	import OllamaSettings from './OllamaSettings.svelte';
 	import { settings, updateSetting, setTheme } from '$lib/stores/settingsStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
 	import { getAvailableModels } from '$lib/models/registry';
@@ -13,7 +14,7 @@
 
 	let { open = $bindable(false), onclose }: Props = $props();
 
-	let activeTab = $state<'api' | 'prefs' | 'memory'>('api');
+	let activeTab = $state<'api' | 'ollama' | 'prefs' | 'memory'>('api');
 
 	function close() {
 		open = false;
@@ -68,7 +69,8 @@
 		<div class="flex border-b border-slate-800" role="tablist" aria-label="Secciones de configuración">
 			{#each [
 				{ id: 'api', label: '🔑 APIs' },
-				{ id: 'prefs', label: '⚙️ Preferencias' },
+				{ id: 'ollama', label: '🦙 Ollama' },
+				{ id: 'prefs', label: '⚙️ Prefs' },
 				{ id: 'memory', label: '🧠 Memoria' }
 			] as tab (tab.id)}
 				<button
@@ -89,6 +91,8 @@
 		<div class="p-4" role="tabpanel" id="settings-panel-{activeTab}">
 			{#if activeTab === 'api'}
 				<ApiKeyManager />
+			{:else if activeTab === 'ollama'}
+				<OllamaSettings />
 			{:else if activeTab === 'prefs'}
 				<div class="space-y-4">
 					<!-- Theme -->
