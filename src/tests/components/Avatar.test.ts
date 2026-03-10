@@ -38,6 +38,6 @@ describe('Avatar', () => {
 	it('renders the provider icon', () => {
 		render(Avatar, { props: { model: 'gpt-4o', provider: 'openai', state: 'idle' } });
 		const avatar = screen.getByRole('img');
-		expect(avatar.textContent).toContain('✦');
+		expect(avatar.querySelector('svg')).toBeInTheDocument();
 	});
 });

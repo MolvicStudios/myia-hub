@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { ModelProvider, AvatarState } from '$lib/types';
+	import ProviderIcon from './ProviderIcon.svelte';
 
 	interface Props {
 		model: string;
@@ -21,21 +22,11 @@
 		ollama: '#1e88e5'
 	};
 
-	const MODEL_ICONS: Record<string, string> = {
-		openai: '✦',
-		anthropic: '◈',
-		gemini: '◆',
-		mistral: '▲',
-		deepseek: '◉',
-		groq: '⚡',
-		openrouter: '◇',
-		ollama: '🦙'
-	};
-
+	const ICON_SIZES = { sm: 16, md: 22, lg: 30 };
 	const SIZES = { sm: 'w-8 h-8 text-sm', md: 'w-12 h-12 text-lg', lg: 'w-16 h-16 text-2xl' };
 
 	let color = $derived(MODEL_COLORS[provider] ?? '#64748b');
-	let icon = $derived(MODEL_ICONS[provider] ?? '●');
+	let iconSize = $derived(ICON_SIZES[size]);
 	let sizeClass = $derived(SIZES[size]);
 
 	let stateClass = $derived(
@@ -64,7 +55,9 @@
 	{/if}
 
 	<!-- Icon -->
-	<span class="relative z-10 select-none">{icon}</span>
+	<span class="relative z-10 flex items-center justify-center">
+		<ProviderIcon {provider} size={iconSize} />
+	</span>
 
 	<!-- Typing indicator dots -->
 	{#if state === 'typing'}

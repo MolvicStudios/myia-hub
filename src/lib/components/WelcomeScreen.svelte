@@ -17,8 +17,8 @@
 <div class="flex flex-col items-center justify-center h-full px-4 py-12 animate-fade-in">
 	<!-- Logo / Hero avatar -->
 	<div class="mb-6">
-		<div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-3xl shadow-lg shadow-blue-500/25 animate-bounce-subtle">
-			✦
+		<div class="w-20 h-20 rounded-2xl shadow-lg shadow-blue-500/25 animate-bounce-subtle overflow-hidden">
+			<img src="/favicon.svg" alt="MyIA Hub" width="80" height="80" class="w-full h-full" />
 		</div>
 	</div>
 

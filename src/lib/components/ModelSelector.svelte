@@ -2,6 +2,7 @@
 	import { getAvailableModels } from '$lib/models/registry';
 	import type { ModelDef } from '$lib/types';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
+	import ProviderIcon from './ProviderIcon.svelte';
 
 	interface Props {
 		onchange?: (model: ModelDef) => void;
@@ -87,7 +88,7 @@
 		onclick={() => (open = !open)}
 		onkeydown={handleKeydown}
 	>
-		<span class="w-3 h-3 rounded-full" style="background: {current.color}"></span>
+		<ProviderIcon provider={current.provider} size={16} />
 		<span class="font-medium">{current.name}</span>
 		<svg class="w-4 h-4 opacity-50 transition-transform {open ? 'rotate-180' : ''}" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
 			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -124,7 +125,7 @@
 						class:ring-blue-500={idx === highlightedIdx}
 						onclick={() => select(model)}
 					>
-						<span class="w-3 h-3 rounded-full mt-1.5 shrink-0" style="background: {model.color}"></span>
+						<span class="mt-1 shrink-0"><ProviderIcon provider={model.provider} size={16} /></span>
 						<div class="flex-1 min-w-0">
 							<div class="font-medium text-sm">{model.name}</div>
 							<div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
