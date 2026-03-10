@@ -2,8 +2,11 @@
 	import { browser } from '$app/environment';
 	import ProviderIcon from '$lib/components/ProviderIcon.svelte';
 	import {
+		ALL_DEBATE_CANDIDATES,
 		DEFAULT_PARTICIPANTS,
 		DEFAULT_TOPIC,
+		MAX_PARTICIPANTS,
+		MIN_PARTICIPANTS,
 		getReadyParticipants,
 		runDebate,
 		type DebateMessage,
@@ -21,17 +24,38 @@
 	let error = $state('');
 	let abortController: AbortController | null = null;
 	let containerEl: HTMLDivElement | undefined = $state();
+	let selectorOpen = $state(false);
 
-	const participants = DEFAULT_PARTICIPANTS;
+	// Selected participants (mutable)
+	let participants: DebateParticipant[] = $state([...DEFAULT_PARTICIPANTS]);
 
 	let readiness = $derived(
 		browser ? getReadyParticipants(participants) : { ready: participants, missing: [] }
 	);
 
+	function isSelected(candidate: DebateParticipant): boolean {
+		return participants.some((p) => p.modelId === candidate.modelId);
+	}
+
+	function toggleParticipant(candidate: DebateParticipant) {
+		if (isSelected(candidate)) {
+			if (participants.length <= MIN_PARTICIPANTS) return;
+			participants = participants.filter((p) => p.modelId !== candidate.modelId);
+		} else {
+			if (participants.length >= MAX_PARTICIPANTS) return;
+			participants = [...participants, candidate];
+		}
+	}
+
 	const COLORS: Record<string, string> = {
-		openrouter: 'border-violet-500/40 bg-violet-500/5',
+		openai: 'border-emerald-500/40 bg-emerald-500/5',
+		anthropic: 'border-amber-500/40 bg-amber-500/5',
+		gemini: 'border-blue-500/40 bg-blue-500/5',
 		mistral: 'border-orange-500/40 bg-orange-500/5',
-		groq: 'border-red-500/40 bg-red-500/5'
+		deepseek: 'border-indigo-500/40 bg-indigo-500/5',
+		groq: 'border-red-500/40 bg-red-500/5',
+		openrouter: 'border-violet-500/40 bg-violet-500/5',
+		ollama: 'border-sky-500/40 bg-sky-500/5'
 	};
 
 	function scrollToBottom() {
@@ -99,17 +123,28 @@
 			</svg>
 			Debate Multi-Modelo
 		</h1>
-		<p class="text-xs text-slate-400 mt-1">3 modelos debaten entre sí, leyendo las respuestas de los demás</p>
+		<p class="text-xs text-slate-400 mt-1">Hasta 4 modelos debaten entre sí, leyendo las respuestas de los demás</p>
 	</div>
 
 	<!-- Config panel -->
 	{#if !running && !finished}
 		<div class="shrink-0 p-4 border-b border-slate-800/50 space-y-4">
-			<!-- Participants -->
+			<!-- Participants selector -->
 			<div>
-				<label class="text-xs text-slate-400 font-medium mb-2 block">Participantes</label>
+				<div class="flex items-center justify-between mb-2">
+					<label class="text-xs text-slate-400 font-medium">Participantes ({participants.length}/{MAX_PARTICIPANTS})</label>
+					<button
+						type="button"
+						class="text-xs text-violet-400 hover:text-violet-300 transition-colors"
+						onclick={() => (selectorOpen = !selectorOpen)}
+					>
+						{selectorOpen ? 'Cerrar' : 'Cambiar'}
+					</button>
+				</div>
+
+				<!-- Selected participants chips -->
 				<div class="flex flex-wrap gap-2">
-					{#each participants as p}
+					{#each participants as p (p.modelId)}
 						{@const hasKey = readiness.ready.some((r) => r.provider === p.provider)}
 						<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/50 border border-slate-700/50 text-sm">
 							<ProviderIcon provider={p.provider} size={16} />
@@ -119,9 +154,50 @@
 							{:else}
 								<span class="w-2 h-2 rounded-full bg-red-500" title="Falta API key"></span>
 							{/if}
+							{#if participants.length > MIN_PARTICIPANTS}
+								<button
+									type="button"
+									class="text-slate-500 hover:text-red-400 transition-colors -mr-1"
+									onclick={() => toggleParticipant(p)}
+									aria-label="Quitar {p.name}"
+								>
+									<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+								</button>
+							{/if}
 						</div>
 					{/each}
 				</div>
+
+				<!-- Candidate grid -->
+				{#if selectorOpen}
+					<div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+						{#each ALL_DEBATE_CANDIDATES as candidate (candidate.modelId)}
+							{@const selected = isSelected(candidate)}
+							{@const atMax = participants.length >= MAX_PARTICIPANTS}
+							{@const disabled = !selected && atMax}
+							<button
+								type="button"
+								class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm text-left transition-all
+									{selected
+										? 'border-violet-500 bg-violet-500/10 text-white'
+										: disabled
+											? 'border-slate-700/30 bg-slate-800/20 text-slate-600 cursor-not-allowed'
+											: 'border-slate-700/50 bg-slate-800/30 hover:bg-slate-800/60 hover:border-slate-600 text-slate-300'}"
+								onclick={() => !disabled && toggleParticipant(candidate)}
+							>
+								<ProviderIcon provider={candidate.provider} size={16} />
+								<span class="flex-1 truncate">{candidate.name}</span>
+								{#if selected}
+									<svg class="w-4 h-4 text-violet-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+									</svg>
+								{/if}
+							</button>
+						{/each}
+					</div>
+					<p class="text-xs text-slate-500 mt-2">Mínimo {MIN_PARTICIPANTS}, máximo {MAX_PARTICIPANTS} participantes</p>
+				{/if}
+
 				{#if readiness.missing.length > 0}
 					<p class="text-xs text-red-400 mt-2">
 						Falta API key para: {readiness.missing.map((m) => m.name).join(', ')}.
@@ -158,11 +234,11 @@
 			<!-- Start -->
 			<button
 				type="button"
-				disabled={readiness.missing.length > 0}
+				disabled={readiness.missing.length > 0 || participants.length < MIN_PARTICIPANTS}
 				onclick={startDebate}
 				class="w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-sm transition-all"
 			>
-				Iniciar Debate ({rounds} rondas)
+				Iniciar Debate ({participants.length} modelos, {rounds} rondas)
 			</button>
 		</div>
 	{/if}

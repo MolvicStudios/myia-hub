@@ -25,12 +25,28 @@ export interface DebateConfig {
 	rounds: number;
 }
 
+/** All cloud models available as debate candidates (excludes Ollama) */
+export const ALL_DEBATE_CANDIDATES: DebateParticipant[] = [
+	{ modelId: 'gpt-4.1', name: 'GPT-4.1', provider: 'openai' },
+	{ modelId: 'gpt-4o', name: 'GPT-4o', provider: 'openai' },
+	{ modelId: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', provider: 'anthropic' },
+	{ modelId: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', provider: 'anthropic' },
+	{ modelId: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash', provider: 'gemini' },
+	{ modelId: 'mistral-large-latest', name: 'Mistral Large', provider: 'mistral' },
+	{ modelId: 'deepseek-chat', name: 'DeepSeek Chat', provider: 'deepseek' },
+	{ modelId: 'llama-3.3-70b-versatile', name: 'Groq (Llama 3.3)', provider: 'groq' },
+	{ modelId: 'openrouter/auto', name: 'OpenRouter Auto', provider: 'openrouter' }
+];
+
 /** Default debate participants */
 export const DEFAULT_PARTICIPANTS: DebateParticipant[] = [
-	{ modelId: 'openrouter/auto', name: 'OpenRouter', provider: 'openrouter' },
+	{ modelId: 'openrouter/auto', name: 'OpenRouter Auto', provider: 'openrouter' },
 	{ modelId: 'mistral-large-latest', name: 'Mistral Large', provider: 'mistral' },
 	{ modelId: 'llama-3.3-70b-versatile', name: 'Groq (Llama 3.3)', provider: 'groq' }
 ];
+
+export const MAX_PARTICIPANTS = 4;
+export const MIN_PARTICIPANTS = 2;
 
 /** Default debate topic */
 export const DEFAULT_TOPIC =
