@@ -88,11 +88,19 @@ export default {
 				const parsed = JSON.parse(body);
 				const action = parsed.stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
 				targetUrl = `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}:${action}?key=${encodeURIComponent(apiKey)}`;
-				// Strip model and stream from body — Gemini API only wants contents
+				// Strip model and stream — forward only Gemini-native fields (contents, systemInstruction, generationConfig, etc.)
 				const { model: _m, stream: _s, ...geminiBody } = parsed;
 				forwardBody = JSON.stringify(geminiBody);
+				// Gemini uses key in URL, not Authorization header
+				delete headers['Authorization'];
 			} else if (provider === 'ollama') {
-				const ollamaEndpoint = env.OLLAMA_ENDPOINT || 'http://localhost:11434';
+				const ollamaEndpoint = env.OLLAMA_ENDPOINT;
+				if (!ollamaEndpoint) {
+					return new Response(JSON.stringify({ error: 'Los modelos Ollama requieren un servidor local. Ejecuta Ollama en tu máquina y usa la app en localhost:5173, o configura OLLAMA_ENDPOINT en el Worker.' }), {
+						status: 503,
+						headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json' }
+					});
+				}
 				targetUrl = `${ollamaEndpoint}/api/chat`;
 			} else {
 				targetUrl = PROVIDER_ENDPOINTS[provider];

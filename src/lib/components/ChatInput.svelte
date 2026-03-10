@@ -65,7 +65,7 @@
 
 	function handleKeydown(e: KeyboardEvent) {
 		if (showSuggestions) {
-			const max = Math.min(suggestions.length, 6) - 1;
+			const max = Math.min(suggestions.length, 15) - 1;
 			switch (e.key) {
 				case 'ArrowDown':
 					e.preventDefault();
@@ -100,7 +100,7 @@
 		if ((!text.trim() && files.length === 0) || disabled) return;
 
 		// Extract mentions from text
-		const mentionMatches = [...text.matchAll(/@(\w+)/g)].map((m) => m[1]);
+		const mentionMatches = [...text.matchAll(/@([\w-]+)/g)].map((m) => m[1]);
 
 		onsend?.({ text: text.trim(), files: [...files], mentions: mentionMatches });
 		text = '';
@@ -157,8 +157,8 @@
 
 	<!-- Mention suggestions popup -->
 	{#if showSuggestions}
-		<div class="absolute bottom-full left-4 mb-2 w-64 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden animate-scale-in z-50" role="listbox" aria-label="Sugerencias de modelos">
-			{#each suggestions.slice(0, 6) as model, idx (model.id)}
+		<div class="absolute bottom-full left-4 mb-2 w-64 max-h-80 overflow-y-auto bg-slate-800 border border-slate-700 rounded-xl shadow-xl animate-scale-in z-50" role="listbox" aria-label="Sugerencias de modelos">
+			{#each suggestions.slice(0, 15) as model, idx (model.id)}
 				<button
 					type="button"
 					role="option"

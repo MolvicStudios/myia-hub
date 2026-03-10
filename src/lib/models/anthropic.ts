@@ -48,7 +48,7 @@ export const anthropicClient: ModelClient = {
 		onChunk: (text: string) => void,
 		signal?: AbortSignal
 	): Promise<ModelResponse> {
-		const body = {
+		const body: Record<string, unknown> = {
 			model: payload.model,
 			max_tokens: payload.maxTokens ?? 4096,
 			stream: true,
@@ -56,6 +56,9 @@ export const anthropicClient: ModelClient = {
 				.filter((m) => m.role !== 'system')
 				.map((m) => ({ role: m.role, content: m.content }))
 		};
+
+		const systemMsg = payload.messages.find((m) => m.role === 'system');
+		if (systemMsg) body.system = systemMsg.content;
 
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',

@@ -5,8 +5,8 @@
 import type { Mention, ParsedInput, ModelProvider } from '$lib/types';
 import { MODEL_REGISTRY, getModelDef } from '$lib/models/registry';
 
-/** Regex that matches @alias */
-const MENTION_RE = /@(\w+)/g;
+/** Regex that matches @alias (supports hyphens for aliases like mistral-local) */
+const MENTION_RE = /@([\w-]+)/g;
 
 /** Parse user input for @mentions */
 export function parseMentions(raw: string, defaultModel: string | null): ParsedInput {
@@ -97,7 +97,7 @@ export function getModelSuggestions(partial: string): typeof MODEL_REGISTRY {
 /** Check if cursor is in a mention context (after @) */
 export function isInMentionContext(text: string, cursorPos: number): { active: boolean; query: string } {
 	const before = text.slice(0, cursorPos);
-	const match = before.match(/@(\w*)$/);
+	const match = before.match(/@([\w-]*)$/);
 	if (match) {
 		return { active: true, query: match[1] };
 	}
