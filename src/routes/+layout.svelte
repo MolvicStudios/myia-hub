@@ -112,6 +112,8 @@
 			<span>·</span>
 			<a href="/compare" class="hover:text-slate-300 transition-colors">Comparador</a>
 			<span>·</span>
+			<a href="/debate" class="hover:text-slate-300 transition-colors">Debate</a>
+			<span>·</span>
 			<a href="/privacy" class="hover:text-slate-300 transition-colors">Privacidad</a>
 			<span>·</span>
 			<a href="/cookies" class="hover:text-slate-300 transition-colors">Cookies</a>
