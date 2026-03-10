@@ -1,0 +1,44 @@
+<script lang="ts">
+	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { createChat } from '$lib/stores/chatStore';
+	import Avatar from './Avatar.svelte';
+	import type { ModelProvider } from '$lib/types';
+
+	function startChat(modelId: string, provider: ModelProvider) {
+		createChat(modelId, provider);
+	}
+</script>
+
+<div class="flex flex-col items-center justify-center h-full px-4 py-12 animate-fade-in">
+	<!-- Logo / Hero avatar -->
+	<div class="mb-6">
+		<div class="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-3xl shadow-lg shadow-blue-500/25 animate-bounce-subtle">
+			✦
+		</div>
+	</div>
+
+	<h1 class="text-2xl font-bold mb-2">MyIA Hub</h1>
+	<p class="text-slate-400 text-sm mb-8 text-center max-w-md">
+		Tu hub de inteligencia artificial multimodelo. Elige un modelo para comenzar una conversación.
+	</p>
+
+	<!-- Quick start models -->
+	<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-lg mb-8">
+		{#each MODEL_REGISTRY.slice(0, 8) as model (model.id)}
+			<button
+				type="button"
+				class="flex flex-col items-center gap-2 p-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all duration-200 active:scale-95"
+				onclick={() => startChat(model.id, model.provider)}
+			>
+				<Avatar model={model.id} provider={model.provider} state="idle" size="md" />
+				<span class="text-xs font-medium text-center">{model.name}</span>
+			</button>
+		{/each}
+	</div>
+
+	<!-- Hint -->
+	<p class="text-xs text-slate-500 text-center">
+		Usa <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400 text-[10px]">@modelo</kbd>
+		en un chat para dirigirte a un modelo específico
+	</p>
+</div>

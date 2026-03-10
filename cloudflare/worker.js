@@ -1,0 +1,110 @@
+/**
+ * Cloudflare Worker — API proxy for MyIA Hub.
+ * Proxies requests to AI model APIs, adding server-side API keys if configured.
+ * This keeps user API keys safe and allows optional server-managed keys.
+ */
+
+const ALLOWED_ORIGINS = [
+	'https://myia-hub.pages.dev',
+	'http://localhost:5173',
+	'http://localhost:4173'
+];
+
+function getCorsHeaders(request) {
+	const origin = request.headers.get('Origin') || '';
+	const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+	return {
+		'Access-Control-Allow-Origin': allowedOrigin,
+		'Access-Control-Allow-Methods': 'POST, OPTIONS',
+		'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-api-key'
+	};
+}
+
+const PROVIDER_ENDPOINTS = {
+	openai: 'https://api.openai.com/v1/chat/completions',
+	anthropic: 'https://api.anthropic.com/v1/messages',
+	gemini: 'https://generativelanguage.googleapis.com/v1beta',
+	mistral: 'https://api.mistral.ai/v1/chat/completions',
+	deepseek: 'https://api.deepseek.com/chat/completions',
+	groq: 'https://api.groq.com/openai/v1/chat/completions',
+	openrouter: 'https://openrouter.ai/api/v1/chat/completions'
+};
+
+export default {
+	async fetch(request, env) {
+		// Handle CORS preflight
+		if (request.method === 'OPTIONS') {
+			return new Response(null, { headers: getCorsHeaders(request) });
+		}
+
+		if (request.method !== 'POST') {
+			return new Response('Method not allowed', { status: 405, headers: getCorsHeaders(request) });
+		}
+
+		const url = new URL(request.url);
+		const provider = url.pathname.replace('/api/', '').replace('/', '');
+
+		if (!PROVIDER_ENDPOINTS[provider]) {
+			return new Response(JSON.stringify({ error: `Unknown provider: ${provider}` }), {
+				status: 400,
+				headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json' }
+			});
+		}
+
+		try {
+			const body = await request.text();
+			const clientApiKey = request.headers.get('Authorization')?.replace('Bearer ', '') || '';
+			// Prefer server-side env key, fallback to client key
+			const envKey = env[`${provider.toUpperCase()}_API_KEY`] || '';
+			const apiKey = envKey || clientApiKey;
+
+			if (!apiKey && provider !== 'ollama') {
+				return new Response(JSON.stringify({ error: 'No API key provided' }), {
+					status: 401,
+					headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json' }
+				});
+			}
+
+			const headers = { 'Content-Type': 'application/json' };
+
+			if (provider === 'anthropic') {
+				headers['x-api-key'] = apiKey;
+				headers['anthropic-version'] = '2023-06-01';
+			} else {
+				headers['Authorization'] = `Bearer ${apiKey}`;
+			}
+
+			if (provider === 'openrouter') {
+				headers['HTTP-Referer'] = 'https://myia-hub.pages.dev';
+				headers['X-Title'] = 'MyIA Hub';
+			}
+
+			const targetUrl =
+				provider === 'gemini'
+					? `${PROVIDER_ENDPOINTS[provider]}/models/${JSON.parse(body).model}:generateContent?key=${encodeURIComponent(apiKey)}`
+					: PROVIDER_ENDPOINTS[provider];
+
+			const response = await fetch(targetUrl, {
+				method: 'POST',
+				headers,
+				body
+			});
+
+			const responseHeaders = { ...getCorsHeaders(request) };
+			// Forward streaming headers if present
+			if (response.headers.get('content-type')) {
+				responseHeaders['Content-Type'] = response.headers.get('content-type');
+			}
+
+			return new Response(response.body, {
+				status: response.status,
+				headers: responseHeaders
+			});
+		} catch (err) {
+			return new Response(JSON.stringify({ error: err.message || 'Proxy error' }), {
+				status: 500,
+				headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json' }
+			});
+		}
+	}
+};
