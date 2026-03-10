@@ -28,7 +28,8 @@ const PROVIDER_ENDPOINTS = {
 	mistral: 'https://api.mistral.ai/v1/chat/completions',
 	deepseek: 'https://api.deepseek.com/chat/completions',
 	groq: 'https://api.groq.com/openai/v1/chat/completions',
-	openrouter: 'https://openrouter.ai/api/v1/chat/completions'
+	openrouter: 'https://openrouter.ai/api/v1/chat/completions',
+	ollama: null // resolved from env.OLLAMA_ENDPOINT
 };
 
 export default {
@@ -45,7 +46,7 @@ export default {
 		const url = new URL(request.url);
 		const provider = url.pathname.replace('/api/', '').replace('/', '');
 
-		if (!PROVIDER_ENDPOINTS[provider]) {
+		if (!(provider in PROVIDER_ENDPOINTS)) {
 			return new Response(JSON.stringify({ error: `Unknown provider: ${provider}` }), {
 				status: 400,
 				headers: { ...getCorsHeaders(request), 'Content-Type': 'application/json' }
@@ -67,11 +68,12 @@ export default {
 			}
 
 			const headers = { 'Content-Type': 'application/json' };
+			let forwardBody = body;
 
 			if (provider === 'anthropic') {
 				headers['x-api-key'] = apiKey;
 				headers['anthropic-version'] = '2023-06-01';
-			} else {
+			} else if (provider !== 'ollama') {
 				headers['Authorization'] = `Bearer ${apiKey}`;
 			}
 
@@ -80,19 +82,26 @@ export default {
 				headers['X-Title'] = 'MyIA Hub';
 			}
 
-			const targetUrl =
-				provider === 'gemini'
-					? (() => {
-						const parsed = JSON.parse(body);
-						const action = parsed.stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
-						return `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}:${action}?key=${encodeURIComponent(apiKey)}`;
-					})()
-					: PROVIDER_ENDPOINTS[provider];
+			let targetUrl;
+
+			if (provider === 'gemini') {
+				const parsed = JSON.parse(body);
+				const action = parsed.stream ? 'streamGenerateContent?alt=sse' : 'generateContent';
+				targetUrl = `${PROVIDER_ENDPOINTS[provider]}/models/${parsed.model}:${action}?key=${encodeURIComponent(apiKey)}`;
+				// Strip model and stream from body — Gemini API only wants contents
+				const { model: _m, stream: _s, ...geminiBody } = parsed;
+				forwardBody = JSON.stringify(geminiBody);
+			} else if (provider === 'ollama') {
+				const ollamaEndpoint = env.OLLAMA_ENDPOINT || 'http://localhost:11434';
+				targetUrl = `${ollamaEndpoint}/api/chat`;
+			} else {
+				targetUrl = PROVIDER_ENDPOINTS[provider];
+			}
 
 			const response = await fetch(targetUrl, {
 				method: 'POST',
 				headers,
-				body
+				body: forwardBody
 			});
 
 			const responseHeaders = { ...getCorsHeaders(request) };

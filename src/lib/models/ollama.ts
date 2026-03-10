@@ -1,16 +1,15 @@
 import type { ModelClient } from './base';
+import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import { WORKER_PROXY } from '$lib/config';
 
-const DEFAULT_ENDPOINT = 'http://localhost:11434';
+const ENDPOINT = `${WORKER_PROXY}/api/ollama`;
 
 export const ollamaClient: ModelClient = {
-	async send(payload: ModelRequestPayload, _apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
-		const endpoint = _apiKey || DEFAULT_ENDPOINT;
-		const url = `${endpoint}/api/chat`;
-
-		const res = await fetch(url, {
+	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
+		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
 				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
@@ -34,16 +33,13 @@ export const ollamaClient: ModelClient = {
 
 	async sendStream(
 		payload: ModelRequestPayload,
-		_apiKey: string,
+		apiKey: string,
 		onChunk: (text: string) => void,
 		signal?: AbortSignal
 	): Promise<ModelResponse> {
-		const endpoint = _apiKey || DEFAULT_ENDPOINT;
-		const url = `${endpoint}/api/chat`;
-
-		const res = await fetch(url, {
+		const res = await fetch(ENDPOINT, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
 				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
