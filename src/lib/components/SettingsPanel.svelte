@@ -2,8 +2,9 @@
 	import ApiKeyManager from './ApiKeyManager.svelte';
 	import OllamaSettings from './OllamaSettings.svelte';
 	import { settings, updateSetting, setTheme } from '$lib/stores/settingsStore';
+	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
-	import { getAvailableModels } from '$lib/models/registry';
+	import { getAvailableModels, getModelDef } from '$lib/models/registry';
 	import { locale, setLocale, i18n } from '$lib/stores/i18nStore';
 	import { onMount } from 'svelte';
 
@@ -125,7 +126,12 @@
 						<select
 							class="w-full bg-slate-900 rounded-lg px-3 py-2 text-sm border border-slate-600 focus:border-blue-500 focus:outline-none"
 							value={$settings.defaultModel}
-							onchange={(e) => updateSetting('defaultModel', (e.target as HTMLSelectElement).value)}
+							onchange={(e) => {
+								const id = (e.target as HTMLSelectElement).value;
+								updateSetting('defaultModel', id);
+								const def = getModelDef(id);
+								if (def) { $selectedModel = def.id; $selectedProvider = def.provider; }
+							}}
 						>
 							{#each getAvailableModels() as model (model.id)}
 								<option value={model.id}>{model.name}</option>

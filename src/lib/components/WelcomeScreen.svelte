@@ -1,11 +1,16 @@
 <script lang="ts">
 	import { getAvailableModels } from '$lib/models/registry';
 	import { createChat } from '$lib/stores/chatStore';
+	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
+	import { goto } from '$app/navigation';
 	import Avatar from './Avatar.svelte';
 	import type { ModelProvider } from '$lib/types';
 
 	function startChat(modelId: string, provider: ModelProvider) {
-		createChat(modelId, provider);
+		$selectedModel = modelId;
+		$selectedProvider = provider;
+		const id = createChat(modelId, provider);
+		goto(`/chat/${id}`);
 	}
 </script>
 
