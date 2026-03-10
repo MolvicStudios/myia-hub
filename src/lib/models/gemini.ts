@@ -39,8 +39,16 @@ function buildGeminiPayload(messages: { role: string; content: string }[], attac
 				if (att.data && att.type.startsWith('image/')) {
 					const rawBase64 = att.data.includes(',') ? att.data.split(',')[1] : att.data;
 					lastUser.parts.push({ inlineData: { mimeType: att.type, data: rawBase64 } });
-				} else if (att.preview && (att.type.startsWith('text/') || att.type === 'application/json')) {
-					lastUser.parts.push({ text: `[Archivo: ${att.name}]\n${att.preview}` });
+				} else if (att.type.startsWith('text/') || att.type === 'application/json') {
+					let fullText = att.preview ?? '';
+					if (att.data) {
+						try {
+							const b64 = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+							const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+							fullText = new TextDecoder().decode(bytes);
+						} catch { /* fallback to preview */ }
+					}
+					lastUser.parts.push({ text: `[Archivo: ${att.name}]\n${fullText}` });
 				}
 			}
 		}

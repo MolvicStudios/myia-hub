@@ -24,6 +24,18 @@ export function buildHeaders(apiKey: string, extra: Record<string, string> = {})
 	};
 }
 
+/** Decode full text content from a base64 data URI */
+function decodeTextAttachment(att: FileAttachment): string {
+	if (!att.data) return att.preview ?? '';
+	try {
+		const b64 = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+		const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+		return new TextDecoder().decode(bytes);
+	} catch {
+		return att.preview ?? '';
+	}
+}
+
 /** Build OpenAI-compatible multimodal message content (used by OpenAI, Mistral, Groq, OpenRouter, DeepSeek) */
 export function buildOpenAIMessages(
 	messages: { role: string; content: string }[],
@@ -35,18 +47,25 @@ export function buildOpenAIMessages(
 		if (!isLastUser || !attachments?.length) {
 			return { role: m.role, content: m.content };
 		}
-		const parts: Array<Record<string, unknown>> = [{ type: 'text', text: m.content }];
+		const textParts: string[] = [];
+		const imageParts: Array<Record<string, unknown>> = [];
 		for (const att of attachments) {
 			if (att.data && att.type.startsWith('image/')) {
-				parts.push({
+				imageParts.push({
 					type: 'image_url',
 					image_url: { url: att.data.startsWith('data:') ? att.data : `data:${att.type};base64,${att.data}` }
 				});
-			} else if (att.preview && (att.type.startsWith('text/') || att.type === 'application/json')) {
-				// Inject text file content inline
-				parts[0] = { type: 'text', text: `${m.content}\n\n[Archivo: ${att.name}]\n${att.preview}` };
+			} else if (att.type.startsWith('text/') || att.type === 'application/json') {
+				const fullText = decodeTextAttachment(att);
+				textParts.push(`[Archivo: ${att.name}]\n${fullText}`);
 			}
 		}
-		return { role: m.role, content: parts.length > 1 ? parts : m.content };
+		const textContent = textParts.length > 0
+			? `${m.content}\n\n${textParts.join('\n\n')}`
+			: m.content;
+		if (imageParts.length > 0) {
+			return { role: m.role, content: [{ type: 'text', text: textContent }, ...imageParts] };
+		}
+		return { role: m.role, content: textContent };
 	});
 }

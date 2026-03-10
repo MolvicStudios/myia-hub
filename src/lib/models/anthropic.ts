@@ -5,6 +5,18 @@ import { WORKER_PROXY } from '$lib/config';
 
 const ENDPOINT = `${WORKER_PROXY}/api/anthropic`;
 
+/** Decode full text content from a base64 data URI */
+function decodeTextData(att: FileAttachment): string {
+	if (!att.data) return att.preview ?? '';
+	try {
+		const b64 = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+		const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+		return new TextDecoder().decode(bytes);
+	} catch {
+		return att.preview ?? '';
+	}
+}
+
 /** Build Anthropic-format message content with attachments */
 function buildAnthropicMessages(
 	messages: { role: string; content: string }[],
@@ -25,8 +37,9 @@ function buildAnthropicMessages(
 						type: 'image',
 						source: { type: 'base64', media_type: att.type, data: rawBase64 }
 					});
-				} else if (att.preview && (att.type.startsWith('text/') || att.type === 'application/json')) {
-					parts.push({ type: 'text', text: `[Archivo: ${att.name}]\n${att.preview}` });
+				} else if (att.type.startsWith('text/') || att.type === 'application/json') {
+					const fullText = decodeTextData(att);
+					parts.push({ type: 'text', text: `[Archivo: ${att.name}]\n${fullText}` });
 				}
 			}
 			parts.push({ type: 'text', text: m.content });

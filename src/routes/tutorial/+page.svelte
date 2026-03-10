@@ -81,17 +81,6 @@
 			freeCredits: 'Modelos gratis disponibles',
 			url: 'https://openrouter.ai/keys',
 			steps: ['Regístrate en openrouter.ai', 'Ve a Keys → Create Key', 'La clave empieza por sk-or-...']
-		},
-		{
-			name: 'Ollama (Local)',
-			id: 'ollama' as ModelProvider,
-			icon: '🦙',
-			color: '#1e88e5',
-			description: 'Modelos locales — 100% gratis, sin internet, privacidad total.',
-			free: true,
-			freeCredits: '100% gratis siempre',
-			url: 'https://ollama.com/download',
-			steps: ['Descarga Ollama desde ollama.com', 'Ejecuta: ollama pull llama3.2:3b', 'No necesitas API key — funciona automáticamente']
 		}
 	];
 
@@ -103,8 +92,7 @@
 			groq: 'llama-3.3-70b-versatile',
 			mistral: 'mistral-large-latest',
 			deepseek: 'deepseek-chat',
-			openrouter: 'openrouter/auto',
-			ollama: 'llama3.2:3b'
+			openrouter: 'openrouter/auto'
 		};
 		const modelId = models[provider] ?? 'gpt-4o';
 		$selectedModel = modelId;
