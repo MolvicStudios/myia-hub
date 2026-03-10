@@ -114,6 +114,8 @@
 			<span>·</span>
 			<a href="/debate" class="hover:text-slate-300 transition-colors">Debate</a>
 			<span>·</span>
+			<a href="mailto:molvicstudios@outlook.com?subject=Feedback%20MyIA%20Hub" class="hover:text-slate-300 transition-colors">Feedback</a>
+			<span>·</span>
 			<a href="/privacy" class="hover:text-slate-300 transition-colors">Privacidad</a>
 			<span>·</span>
 			<a href="/cookies" class="hover:text-slate-300 transition-colors">Cookies</a>
