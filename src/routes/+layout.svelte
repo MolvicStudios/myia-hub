@@ -100,6 +100,13 @@
 		<main class="flex-1 overflow-hidden" id="main-content">
 			{@render children()}
 		</main>
+
+		<!-- Footer legal links -->
+		<footer class="shrink-0 flex items-center justify-center gap-4 px-4 py-1.5 text-xs text-slate-500 border-t border-slate-800/50">
+			<a href="/privacy" class="hover:text-slate-300 transition-colors">Privacidad</a>
+			<span>·</span>
+			<a href="/cookies" class="hover:text-slate-300 transition-colors">Cookies</a>
+		</footer>
 	</div>
 
 	<!-- Settings panel -->
