@@ -119,16 +119,76 @@ export const MODEL_REGISTRY: ModelDef[] = [
 	},
 	// Ollama (local)
 	{
-		id: 'llama3',
-		name: 'Llama 3 (Ollama)',
+		id: 'llama3.2:3b',
+		name: 'Llama 3.2 3B',
 		provider: 'ollama',
-		alias: 'ollama',
+		alias: 'llama3.2',
 		capabilities: ['text', 'code'],
-		speed: 'medium',
+		speed: 'fast',
 		costTier: 'free',
 		color: '#1e88e5',
 		icon: '🦙',
 		maxTokens: 8192
+	},
+	{
+		id: 'phi4-mini',
+		name: 'Phi-4 Mini (3.8B)',
+		provider: 'ollama',
+		alias: 'phi4',
+		capabilities: ['text', 'code'],
+		speed: 'fast',
+		costTier: 'free',
+		color: '#00bcf2',
+		icon: '🔷',
+		maxTokens: 16384
+	},
+	{
+		id: 'gemma3:4b',
+		name: 'Gemma 3 4B',
+		provider: 'ollama',
+		alias: 'gemma3',
+		capabilities: ['text', 'code'],
+		speed: 'fast',
+		costTier: 'free',
+		color: '#4285f4',
+		icon: '💎',
+		maxTokens: 8192
+	},
+	{
+		id: 'qwen3:4b',
+		name: 'Qwen 3 4B',
+		provider: 'ollama',
+		alias: 'qwen3',
+		capabilities: ['text', 'code'],
+		speed: 'fast',
+		costTier: 'free',
+		color: '#6d28d9',
+		icon: '🟪',
+		maxTokens: 32768
+	},
+	{
+		id: 'mistral:7b',
+		name: 'Mistral 7B',
+		provider: 'ollama',
+		alias: 'mistral-local',
+		capabilities: ['text', 'code'],
+		speed: 'medium',
+		costTier: 'free',
+		color: '#ff7000',
+		icon: '🟧',
+		maxTokens: 8192
+	},
+	{
+		id: 'deepseek-r1:7b',
+		name: 'DeepSeek R1 7B',
+		provider: 'ollama',
+		alias: 'deepseek-local',
+		capabilities: ['text', 'code'],
+		speed: 'medium',
+		costTier: 'free',
+		color: '#5b6abf',
+		icon: '🧠',
+		maxTokens: 16384
 	}
 ];
 
