@@ -82,6 +82,10 @@ export async function handleSendMessage(data: SendParams) {
 				.slice(-20)
 				.map((m) => ({ role: m.role, content: m.content }));
 
+			// Collect attachments from the last user message
+			const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
+			const attachments = lastUserMsg?.attachments;
+
 			const $settings = get(settings);
 			if ($settings.memoryEnabled) {
 				const mem = await loadMemory(target.model);
@@ -93,7 +97,7 @@ export async function handleSendMessage(data: SendParams) {
 			avatarState.set('typing');
 
 			await routeMessageStream(
-				{ model: target.model, provider, messages: history, stream: true },
+				{ model: target.model, provider, messages: history, attachments, stream: true },
 				(partial) => {
 					updateLastAssistantMessage(partial);
 					data.scrollToBottom();

@@ -1,12 +1,12 @@
 import type { ModelClient } from './base';
 import { buildHeaders } from './base';
-import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import type { ModelRequestPayload, ModelResponse, FileAttachment } from '$lib/types';
 import { WORKER_PROXY } from '$lib/config';
 
 const ENDPOINT = `${WORKER_PROXY}/api/gemini`;
 
 /** Build Gemini-compatible contents array with proper alternating roles */
-function buildGeminiPayload(messages: { role: string; content: string }[]) {
+function buildGeminiPayload(messages: { role: string; content: string }[], attachments?: FileAttachment[]) {
 	// Extract system messages as systemInstruction
 	const systemParts = messages
 		.filter((m) => m.role === 'system' && m.content.trim())
@@ -17,7 +17,7 @@ function buildGeminiPayload(messages: { role: string; content: string }[]) {
 		.filter((m) => m.role !== 'system' && m.content.trim())
 		.map((m) => ({
 			role: m.role === 'assistant' ? 'model' : 'user',
-			parts: [{ text: m.content }]
+			parts: [{ text: m.content }] as Array<Record<string, unknown>>
 		}));
 
 	// Merge consecutive same-role messages (Gemini requires alternating)
@@ -28,6 +28,21 @@ function buildGeminiPayload(messages: { role: string; content: string }[]) {
 			last.parts.push(...msg.parts);
 		} else {
 			contents.push({ ...msg, parts: [...msg.parts] });
+		}
+	}
+
+	// Inject attachments into the last user message parts
+	if (attachments?.length && contents.length > 0) {
+		const lastUser = [...contents].reverse().find((c) => c.role === 'user');
+		if (lastUser) {
+			for (const att of attachments) {
+				if (att.data && att.type.startsWith('image/')) {
+					const rawBase64 = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+					lastUser.parts.push({ inlineData: { mimeType: att.type, data: rawBase64 } });
+				} else if (att.preview && (att.type.startsWith('text/') || att.type === 'application/json')) {
+					lastUser.parts.push({ text: `[Archivo: ${att.name}]\n${att.preview}` });
+				}
+			}
 		}
 	}
 
@@ -48,7 +63,7 @@ function buildGeminiPayload(messages: { role: string; content: string }[]) {
 export const geminiClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
 		const model = payload.model || 'gemini-2.0-flash';
-		const geminiBody = buildGeminiPayload(payload.messages);
+		const geminiBody = buildGeminiPayload(payload.messages, payload.attachments);
 
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',
@@ -82,7 +97,7 @@ export const geminiClient: ModelClient = {
 		signal?: AbortSignal
 	): Promise<ModelResponse> {
 		const model = payload.model || 'gemini-2.0-flash';
-		const geminiBody = buildGeminiPayload(payload.messages);
+		const geminiBody = buildGeminiPayload(payload.messages, payload.attachments);
 
 		const res = await fetch(ENDPOINT, {
 			method: 'POST',

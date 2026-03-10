@@ -1,5 +1,5 @@
 import type { ModelClient } from './base';
-import { buildHeaders } from './base';
+import { buildHeaders, buildOpenAIMessages } from './base';
 import type { ModelRequestPayload, ModelResponse } from '$lib/types';
 import { WORKER_PROXY } from '$lib/config';
 
@@ -9,7 +9,7 @@ export const openaiClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
 		const body = {
 			model: payload.model,
-			messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
+			messages: buildOpenAIMessages(payload.messages, payload.attachments),
 			max_tokens: payload.maxTokens ?? 4096,
 			temperature: payload.temperature ?? 0.7,
 			stream: false
@@ -49,7 +49,7 @@ export const openaiClient: ModelClient = {
 	): Promise<ModelResponse> {
 		const body = {
 			model: payload.model,
-			messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
+			messages: buildOpenAIMessages(payload.messages, payload.attachments),
 			max_tokens: payload.maxTokens ?? 4096,
 			temperature: payload.temperature ?? 0.7,
 			stream: true

@@ -1,9 +1,35 @@
 import type { ModelClient } from './base';
 import { buildHeaders } from './base';
-import type { ModelRequestPayload, ModelResponse } from '$lib/types';
+import type { ModelRequestPayload, ModelResponse, FileAttachment } from '$lib/types';
 import { WORKER_PROXY } from '$lib/config';
 
 const ENDPOINT = `${WORKER_PROXY}/api/ollama`;
+
+/** Build Ollama messages — images go in a separate images array per message */
+function buildOllamaMessages(
+	messages: { role: string; content: string }[],
+	attachments?: FileAttachment[]
+): Array<{ role: string; content: string; images?: string[] }> {
+	return messages.map((m, i) => {
+		const isLastUser = m.role === 'user' && i === messages.length - 1;
+		if (!isLastUser || !attachments?.length) {
+			return { role: m.role, content: m.content };
+		}
+		const images: string[] = [];
+		let content = m.content;
+		for (const att of attachments) {
+			if (att.data && att.type.startsWith('image/')) {
+				const raw = att.data.includes(',') ? att.data.split(',')[1] : att.data;
+				images.push(raw);
+			} else if (att.preview && (att.type.startsWith('text/') || att.type === 'application/json')) {
+				content += `\n\n[Archivo: ${att.name}]\n${att.preview}`;
+			}
+		}
+		return images.length > 0
+			? { role: m.role, content, images }
+			: { role: m.role, content };
+	});
+}
 
 export const ollamaClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
@@ -12,7 +38,7 @@ export const ollamaClient: ModelClient = {
 			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
-				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
+				messages: buildOllamaMessages(payload.messages, payload.attachments),
 				stream: false
 			}),
 			signal
@@ -42,7 +68,7 @@ export const ollamaClient: ModelClient = {
 			headers: buildHeaders(apiKey),
 			body: JSON.stringify({
 				model: payload.model,
-				messages: payload.messages.map((m) => ({ role: m.role, content: m.content })),
+				messages: buildOllamaMessages(payload.messages, payload.attachments),
 				stream: true
 			}),
 			signal
