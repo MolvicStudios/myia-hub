@@ -61,10 +61,16 @@ export async function handleSendMessage(data: SendParams) {
 
 	const parsed = parseMentions(data.text, $selectedModel);
 
+	// Keep attachments reference before any store updates (avoids Svelte 5 derived timing issues)
+	const userAttachments = data.files.length > 0 ? data.files : undefined;
+
+	// Ensure there's always content when files are attached so the message isn't filtered out
+	const userContent = data.text || (userAttachments ? `📎 ${userAttachments.map((f) => f.name).join(', ')}` : '');
+
 	addMessage({
 		role: 'user',
-		content: data.text,
-		attachments: data.files.length > 0 ? data.files : undefined
+		content: userContent,
+		attachments: userAttachments
 	});
 	data.scrollToBottom();
 
@@ -94,9 +100,8 @@ export async function handleSendMessage(data: SendParams) {
 				.slice(-20)
 				.map((m) => ({ role: m.role, content: m.content }));
 
-			// Collect attachments from the last user message
-			const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
-			const attachments = lastUserMsg?.attachments;
+			// Use attachments captured before store update (reliable, no timing dependency)
+			const attachments = userAttachments;
 
 			const $settings = get(settings);
 			if ($settings.memoryEnabled) {
