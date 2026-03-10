@@ -83,6 +83,8 @@ export interface UserSettings {
 	memoryEnabled: boolean;
 	memoryPerModel: Record<string, boolean>;
 	sidebarOpen: boolean;
+	ollamaEnabled: boolean;
+	ollamaEndpoint: string;
 }
 
 export interface ModelRequestPayload {

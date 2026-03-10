@@ -3,7 +3,7 @@
  * Supports multiple mentions: "@claude resumen @gpt4o traduce"
  */
 import type { Mention, ParsedInput, ModelProvider } from '$lib/types';
-import { MODEL_REGISTRY, getModelDef } from '$lib/models/registry';
+import { MODEL_REGISTRY, getModelDef, getAvailableModels } from '$lib/models/registry';
 
 /** Regex that matches @alias (supports hyphens for aliases like mistral-local) */
 const MENTION_RE = /@([\w-]+)/g;
@@ -86,7 +86,7 @@ function splitByMentions(raw: string, mentions: Mention[]): string[] {
 /** Get model suggestions for autocomplete */
 export function getModelSuggestions(partial: string): typeof MODEL_REGISTRY {
 	const lower = partial.toLowerCase();
-	return MODEL_REGISTRY.filter(
+	return getAvailableModels().filter(
 		(m) =>
 			m.alias.startsWith(lower) ||
 			m.name.toLowerCase().includes(lower) ||

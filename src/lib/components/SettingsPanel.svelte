@@ -2,7 +2,7 @@
 	import ApiKeyManager from './ApiKeyManager.svelte';
 	import { settings, updateSetting, setTheme } from '$lib/stores/settingsStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
-	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { getAvailableModels } from '$lib/models/registry';
 	import { locale, setLocale, i18n } from '$lib/stores/i18nStore';
 	import { onMount } from 'svelte';
 
@@ -123,7 +123,7 @@
 							value={$settings.defaultModel}
 							onchange={(e) => updateSetting('defaultModel', (e.target as HTMLSelectElement).value)}
 						>
-							{#each MODEL_REGISTRY as model (model.id)}
+							{#each getAvailableModels() as model (model.id)}
 								<option value={model.id}>{model.name}</option>
 							{/each}
 						</select>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { getAvailableModels } from '$lib/models/registry';
 	import { createChat } from '$lib/stores/chatStore';
 	import Avatar from './Avatar.svelte';
 	import type { ModelProvider } from '$lib/types';
@@ -24,7 +24,7 @@
 
 	<!-- Quick start models -->
 	<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 w-full max-w-lg mb-8">
-		{#each MODEL_REGISTRY.slice(0, 8) as model (model.id)}
+		{#each getAvailableModels().slice(0, 8) as model (model.id)}
 			<button
 				type="button"
 				class="flex flex-col items-center gap-2 p-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-slate-600 rounded-xl transition-all duration-200 active:scale-95"

@@ -2,16 +2,18 @@
 	import { apiKeys, saveApiKey, removeApiKey, validateKeyFormat, getApiKey } from '$lib/stores/apiKeyStore';
 	import type { ModelProvider } from '$lib/types';
 
-	const PROVIDERS: { id: ModelProvider; name: string; color: string; placeholder: string }[] = [
+	const ALL_PROVIDERS: { id: ModelProvider; name: string; color: string; placeholder: string }[] = [
 		{ id: 'openai', name: 'OpenAI', color: '#10a37f', placeholder: 'sk-...' },
 		{ id: 'anthropic', name: 'Anthropic', color: '#d97706', placeholder: 'sk-ant-...' },
 		{ id: 'gemini', name: 'Google Gemini', color: '#4285f4', placeholder: 'API key...' },
 		{ id: 'mistral', name: 'Mistral', color: '#ff7000', placeholder: 'API key...' },
 		{ id: 'deepseek', name: 'DeepSeek', color: '#5b6abf', placeholder: 'sk-...' },
 		{ id: 'groq', name: 'Groq', color: '#f55036', placeholder: 'gsk_...' },
-		{ id: 'openrouter', name: 'OpenRouter', color: '#8b5cf6', placeholder: 'sk-or-...' },
-		{ id: 'ollama', name: 'Ollama (local)', color: '#1e88e5', placeholder: 'http://localhost:11434' }
+		{ id: 'openrouter', name: 'OpenRouter', color: '#8b5cf6', placeholder: 'sk-or-...' }
 	];
+
+	// Ollama is managed separately in OllamaSettings
+	const PROVIDERS = ALL_PROVIDERS;
 
 	let editingProvider = $state<ModelProvider | null>(null);
 	let keyInput = $state('');

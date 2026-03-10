@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { getAvailableModels } from '$lib/models/registry';
 	import { getApiKey } from '$lib/stores/apiKeyStore';
 	import { routeMessageStreamIndependent } from '$lib/models/router';
 	import type { ModelDef, ModelProvider } from '$lib/types';
@@ -9,8 +9,8 @@
 	let prompt = $state('');
 	let results = $state<Record<string, { content: string; loading: boolean; error: string | null; time: number }>>({});
 
-	const cloudModels = MODEL_REGISTRY.filter((m) => m.provider !== 'ollama');
-	const localModels = MODEL_REGISTRY.filter((m) => m.provider === 'ollama');
+	const cloudModels = getAvailableModels().filter((m) => m.provider !== 'ollama');
+	const localModels = getAvailableModels().filter((m) => m.provider === 'ollama');
 
 	function toggleModel(model: ModelDef) {
 		const idx = selected.findIndex((m) => m.id === model.id);

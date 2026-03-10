@@ -1,8 +1,9 @@
 <script lang="ts">
 	import ApiKeyManager from '$lib/components/ApiKeyManager.svelte';
+	import OllamaSettings from '$lib/components/OllamaSettings.svelte';
 	import { settings, updateSetting, toggleTheme } from '$lib/stores/settingsStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
-	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { getAvailableModels } from '$lib/models/registry';
 
 	function handleClearMemory() {
 		if (confirm('¿Eliminar toda la memoria local? Esta acción no se puede deshacer.')) {
@@ -27,6 +28,11 @@
 	<!-- API Keys -->
 	<section>
 		<ApiKeyManager />
+	</section>
+
+	<!-- Ollama -->
+	<section>
+		<OllamaSettings />
 	</section>
 
 	<!-- Preferences -->
@@ -56,7 +62,7 @@
 				value={$settings.defaultModel}
 				onchange={(e) => updateSetting('defaultModel', (e.target as HTMLSelectElement).value)}
 			>
-				{#each MODEL_REGISTRY as model (model.id)}
+				{#each getAvailableModels() as model (model.id)}
 					<option value={model.id}>{model.name} ({model.provider})</option>
 				{/each}
 			</select>

@@ -9,7 +9,9 @@ const defaults: UserSettings = {
 	defaultModel: 'gpt-4o',
 	memoryEnabled: true,
 	memoryPerModel: {},
-	sidebarOpen: true
+	sidebarOpen: true,
+	ollamaEnabled: false,
+	ollamaEndpoint: 'http://localhost:11434'
 };
 
 function loadSettings(): UserSettings {

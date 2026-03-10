@@ -1,4 +1,6 @@
 import type { ModelDef } from '$lib/types';
+import { get } from 'svelte/store';
+import { settings } from '$lib/stores/settingsStore';
 
 /** Registry of all supported models */
 export const MODEL_REGISTRY: ModelDef[] = [
@@ -203,4 +205,10 @@ export function getModelDef(idOrAlias: string): ModelDef | undefined {
 /** Get all unique providers */
 export function getProviders(): string[] {
 	return [...new Set(MODEL_REGISTRY.map((m) => m.provider))];
+}
+
+/** Get available models — filters out Ollama when disabled */
+export function getAvailableModels(): ModelDef[] {
+	const ollamaOn = get(settings).ollamaEnabled;
+	return ollamaOn ? MODEL_REGISTRY : MODEL_REGISTRY.filter((m) => m.provider !== 'ollama');
 }

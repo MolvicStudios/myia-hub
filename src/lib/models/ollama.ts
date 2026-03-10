@@ -1,9 +1,13 @@
 import type { ModelClient } from './base';
-import { buildHeaders } from './base';
 import type { ModelRequestPayload, ModelResponse, FileAttachment } from '$lib/types';
-import { WORKER_PROXY } from '$lib/config';
+import { get } from 'svelte/store';
+import { settings } from '$lib/stores/settingsStore';
 
-const ENDPOINT = `${WORKER_PROXY}/api/ollama`;
+/** Resolve the Ollama endpoint from user settings (direct local connection) */
+function getEndpoint(): string {
+	const base = get(settings).ollamaEndpoint || 'http://localhost:11434';
+	return `${base.replace(/\/+$/, '')}/api/chat`;
+}
 
 /** Build Ollama messages — images go in a separate images array per message */
 function buildOllamaMessages(
@@ -33,9 +37,9 @@ function buildOllamaMessages(
 
 export const ollamaClient: ModelClient = {
 	async send(payload: ModelRequestPayload, apiKey: string, signal?: AbortSignal): Promise<ModelResponse> {
-		const res = await fetch(ENDPOINT, {
+		const res = await fetch(getEndpoint(), {
 			method: 'POST',
-			headers: buildHeaders(apiKey),
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				model: payload.model,
 				messages: buildOllamaMessages(payload.messages, payload.attachments),
@@ -63,9 +67,9 @@ export const ollamaClient: ModelClient = {
 		onChunk: (text: string) => void,
 		signal?: AbortSignal
 	): Promise<ModelResponse> {
-		const res = await fetch(ENDPOINT, {
+		const res = await fetch(getEndpoint(), {
 			method: 'POST',
-			headers: buildHeaders(apiKey),
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({
 				model: payload.model,
 				messages: buildOllamaMessages(payload.messages, payload.attachments),

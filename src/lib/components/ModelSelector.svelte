@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { getAvailableModels } from '$lib/models/registry';
 	import type { ModelDef } from '$lib/types';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 
@@ -15,15 +15,15 @@
 
 	let filtered = $derived(
 		search
-			? MODEL_REGISTRY.filter(
+			? getAvailableModels().filter(
 					(m) =>
 						m.name.toLowerCase().includes(search.toLowerCase()) ||
 						m.alias.toLowerCase().includes(search.toLowerCase())
 				)
-			: MODEL_REGISTRY
+			: getAvailableModels()
 	);
 
-	let current = $derived(MODEL_REGISTRY.find((m) => m.id === $selectedModel) ?? MODEL_REGISTRY[0]);
+	let current = $derived(getAvailableModels().find((m) => m.id === $selectedModel) ?? getAvailableModels()[0]);
 
 	function select(model: ModelDef) {
 		$selectedModel = model.id;
