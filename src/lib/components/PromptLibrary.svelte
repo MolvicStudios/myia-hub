@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { savedPrompts, addPrompt, removePrompt } from '$lib/stores/promptStore';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	interface Props {
 		onSelect: (text: string) => void;
@@ -23,8 +24,8 @@
 	<button
 		onclick={() => (open = !open)}
 		class="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors"
-		title="Prompts guardados"
-		aria-label="Prompts guardados"
+		title={$i18n('prompts.saved')}
+		aria-label={$i18n('prompts.saved')}
 	>
 		⭐
 	</button>
@@ -36,7 +37,7 @@
 			onkeydown={(e) => e.key === 'Escape' && (open = false)}
 		>
 			<div class="p-3 border-b border-slate-700 flex items-center justify-between">
-				<h3 class="text-sm font-semibold text-slate-200">Prompts guardados</h3>
+				<h3 class="text-sm font-semibold text-slate-200">{$i18n('prompts.saved')}</h3>
 				<button onclick={() => (open = false)} class="text-slate-400 hover:text-white text-lg">&times;</button>
 			</div>
 
@@ -44,12 +45,12 @@
 			<div class="p-3 border-b border-slate-700 space-y-2">
 				<input
 					bind:value={newLabel}
-					placeholder="Etiqueta (opcional)"
+					placeholder={$i18n('prompts.labelPlaceholder')}
 					class="w-full bg-slate-800 text-sm text-slate-200 rounded-lg px-3 py-1.5 border border-slate-700 focus:border-blue-500 outline-none"
 				/>
 				<textarea
 					bind:value={newText}
-					placeholder="Escribe tu prompt..."
+					placeholder={$i18n('prompts.textPlaceholder')}
 					rows="2"
 					class="w-full bg-slate-800 text-sm text-slate-200 rounded-lg px-3 py-1.5 border border-slate-700 focus:border-blue-500 outline-none resize-none"
 				></textarea>
@@ -58,7 +59,7 @@
 					disabled={!newText.trim()}
 					class="w-full text-sm py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white disabled:opacity-40 transition-colors"
 				>
-					Guardar prompt
+					{$i18n('prompts.save')}
 				</button>
 			</div>
 
@@ -76,13 +77,13 @@
 						<button
 							onclick={() => removePrompt(prompt.id)}
 							class="text-slate-500 hover:text-red-400 text-sm opacity-0 group-hover:opacity-100 transition-opacity shrink-0 mt-1"
-							title="Eliminar"
+							title={$i18n('prompts.delete')}
 						>
 							🗑️
 						</button>
 					</div>
 				{:else}
-					<p class="p-4 text-sm text-slate-500 text-center">No hay prompts guardados aún.</p>
+					<p class="p-4 text-sm text-slate-500 text-center">{$i18n('prompts.empty')}</p>
 				{/each}
 			</div>
 		</div>

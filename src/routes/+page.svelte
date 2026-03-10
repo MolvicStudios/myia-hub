@@ -12,6 +12,7 @@
 	import { avatarState, selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { abortActiveRequest } from '$lib/models/router';
 	import { handleSendMessage } from '$lib/utils/chatActions';
+	import { i18n } from '$lib/stores/i18nStore';
 	import type { FileAttachment } from '$lib/types';
 	import { tick } from 'svelte';
 
@@ -43,10 +44,10 @@
 			<div class="flex items-center gap-1">
 				<button
 					type="button"
-					aria-label="Exportar conversación"
+					aria-label={$i18n('layout.exportConversation')}
 					class="p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-500 hover:text-slate-300 text-xs"
 					onclick={() => (exportOpen = true)}
-					title="Exportar"
+					title={$i18n('layout.export')}
 				>
 					<svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -61,12 +62,12 @@
 			class="flex-1 overflow-y-auto"
 			role="log"
 			aria-live="polite"
-			aria-label="Mensajes de la conversación"
+			aria-label={$i18n('chat.messages')}
 		>
 			{#if $activeMessages.length === 0}
 				<div class="flex flex-col items-center justify-center h-full text-slate-500 text-sm">
 					<Avatar model={$selectedModel} provider={$selectedProvider} state="idle" size="lg" />
-					<p class="mt-4">Comienza la conversación</p>
+					<p class="mt-4">{$i18n('chat.startConversation')}</p>
 				</div>
 			{:else}
 				<div class="py-4">
@@ -76,16 +77,16 @@
 
 					<!-- Typing indicator -->
 					{#if $avatarState === 'typing' || $avatarState === 'loading'}
-						<div class="flex items-center gap-2 px-4 py-2 text-sm text-slate-500 animate-fade-in" role="status" aria-label="El modelo está {$avatarState === 'loading' ? 'pensando' : 'escribiendo'}">
-							<Avatar model={$selectedModel} provider={$selectedProvider} state={$avatarState} size="sm" />
-							<span>{$avatarState === 'loading' ? 'Pensando…' : 'Escribiendo…'}</span>
-							<button
-								type="button"
-								class="ml-2 px-2 py-0.5 text-xs bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg transition-colors"
-								onclick={() => { abortActiveRequest(); $avatarState = 'idle'; }}
-								aria-label="Cancelar generación"
-							>
-								Cancelar
+					<div class="flex items-center gap-2 px-4 py-2 text-sm text-slate-500 animate-fade-in" role="status" aria-label="{$avatarState === 'loading' ? $i18n('chat.thinking') : $i18n('chat.writing')}">
+						<Avatar model={$selectedModel} provider={$selectedProvider} state={$avatarState} size="sm" />
+						<span>{$avatarState === 'loading' ? $i18n('chat.thinking') : $i18n('chat.writing')}</span>
+						<button
+							type="button"
+							class="ml-2 px-2 py-0.5 text-xs bg-red-500/20 hover:bg-red-500/40 text-red-400 rounded-lg transition-colors"
+							onclick={() => { abortActiveRequest(); $avatarState = 'idle'; }}
+							aria-label={$i18n('chat.cancelGeneration')}
+						>
+							{$i18n('chat.cancel')}
 							</button>
 						</div>
 					{/if}

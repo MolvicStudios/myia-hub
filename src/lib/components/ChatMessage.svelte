@@ -4,6 +4,7 @@
 	import { getFileIcon, formatFileSize } from '$lib/utils/fileUtils';
 	import { renderMarkdown } from '$lib/utils/markdown';
 	import { estimateTokens, estimateCost, formatCost } from '$lib/utils/tokenCounter';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	interface Props {
 		message: Msg;
@@ -33,8 +34,8 @@
 		const textarea = document.createElement('textarea');
 		textarea.innerHTML = code;
 		navigator.clipboard.writeText(textarea.value);
-		target.textContent = '✓ Copiado';
-		setTimeout(() => { target.textContent = 'Copiar'; }, 2000);
+		target.textContent = $i18n('chat.copied');
+		setTimeout(() => { target.textContent = $i18n('chat.copy'); }, 2000);
 	}
 </script>
 
@@ -42,7 +43,7 @@
 	class="flex gap-3 px-4 py-3 animate-fade-in {isUser ? 'justify-end' : 'justify-start'}"
 	class:opacity-60={isSystem}
 	role="article"
-	aria-label="{isUser ? 'Mensaje del usuario' : isSystem ? 'Mensaje del sistema' : 'Respuesta de ' + (message.model ?? 'asistente')}"
+	aria-label="{isUser ? $i18n('chat.userMessage') : isSystem ? $i18n('chat.systemMessage') : $i18n('chat.assistantResponse') + ' ' + (message.model ?? 'asistente')}"
 >
 	<!-- Assistant avatar -->
 	{#if !isUser}
@@ -75,7 +76,7 @@
 			{#if message.images?.length}
 				<div class="flex flex-wrap gap-2 mt-2">
 					{#each message.images as img}
-						<img src={img} alt="Adjunto" loading="lazy" class="max-w-48 max-h-48 rounded-lg object-cover" />
+						<img src={img} alt={$i18n('chat.attachment')} loading="lazy" class="max-w-48 max-h-48 rounded-lg object-cover" />
 					{/each}
 				</div>
 			{/if}

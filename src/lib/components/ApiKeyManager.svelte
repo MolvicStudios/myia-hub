@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { apiKeys, saveApiKey, removeApiKey, validateKeyFormat, getApiKey } from '$lib/stores/apiKeyStore';
 	import { WORKER_PROXY } from '$lib/config';
+	import { i18n } from '$lib/stores/i18nStore';
 	import type { ModelProvider } from '$lib/types';
 
 	const ALL_PROVIDERS: { id: ModelProvider; name: string; color: string; placeholder: string }[] = [
@@ -31,7 +32,7 @@
 		const trimmed = keyInput.trim();
 		if (!trimmed) return;
 		if (!validateKeyFormat(editingProvider, trimmed)) {
-			keyError = 'Formato de clave no válido. Revisa el prefijo y longitud.';
+			keyError = $i18n('apikeys.invalidFormat');
 			return;
 		}
 		saveApiKey(editingProvider, trimmed);
@@ -94,28 +95,28 @@
 			});
 			if (res.ok || res.status === 200) {
 				verifyStatus[provider] = 'ok';
-				verifyMsg[provider] = '✓ Clave válida';
+				verifyMsg[provider] = $i18n('apikeys.valid');
 			} else if (res.status === 401 || res.status === 403) {
 				verifyStatus[provider] = 'fail';
-				verifyMsg[provider] = 'Clave inválida o sin permisos';
+				verifyMsg[provider] = $i18n('apikeys.invalid');
 			} else if (res.status === 429) {
 				// Rate limited means the key is valid
 				verifyStatus[provider] = 'ok';
-				verifyMsg[provider] = '✓ Clave válida (rate-limited)';
+				verifyMsg[provider] = $i18n('apikeys.validRateLimited');
 			} else {
 				verifyStatus[provider] = 'ok';
-				verifyMsg[provider] = `✓ Respuesta ${res.status} (clave aceptada)`;
+				verifyMsg[provider] = `✓ ${res.status} (${$i18n('apikeys.accepted')})`;
 			}
 		} catch {
 			verifyStatus[provider] = 'fail';
-			verifyMsg[provider] = 'Error de conexión';
+			verifyMsg[provider] = $i18n('apikeys.connectionError');
 		}
 		setTimeout(() => { verifyStatus[provider] = 'idle'; verifyMsg[provider] = ''; }, 5000);
 	}
 </script>
 
 <div class="space-y-3">
-	<h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Claves API</h3>
+	<h3 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">{$i18n('apikeys.title')}</h3>
 
 	{#each PROVIDERS as prov (prov.id)}
 		<div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
@@ -125,7 +126,7 @@
 					<span class="text-sm font-medium">{prov.name}</span>
 					{#if hasKey(prov.id)}
 						<span class="px-1.5 py-0.5 text-[10px] rounded-full {isValid(prov.id) ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}">
-							{isValid(prov.id) ? 'Activa' : 'Revisar'}
+							{isValid(prov.id) ? $i18n('apikeys.active') : $i18n('apikeys.review')}
 						</span>
 					{/if}
 				</div>
@@ -134,11 +135,11 @@
 					{#if hasKey(prov.id)}
 						<button
 							type="button"
-							aria-label="Verificar clave de {prov.name}"
+							aria-label="{$i18n('apikeys.verifyOf')} {prov.name}"
 							class="p-1 text-slate-500 hover:text-green-400 transition-colors {verifyStatus[prov.id] === 'checking' ? 'animate-pulse' : ''}"
 							onclick={() => verifyKey(prov.id)}
 							disabled={verifyStatus[prov.id] === 'checking'}
-							title="Verificar clave"
+							title={$i18n('apikeys.verify')}
 						>
 							{#if verifyStatus[prov.id] === 'ok'}
 								<span class="text-green-400 text-xs">✓</span>
@@ -152,7 +153,7 @@
 						</button>
 						<button
 							type="button"
-							aria-label="{showKey[prov.id] ? 'Ocultar' : 'Mostrar'} clave de {prov.name}"
+							aria-label="{showKey[prov.id] ? $i18n('apikeys.hide') : $i18n('apikeys.show')} {$i18n('apikeys.keyOf')} {prov.name}"
 							class="p-1 text-slate-500 hover:text-slate-300 transition-colors"
 							onclick={() => toggleShow(prov.id)}
 						>
@@ -167,7 +168,7 @@
 						</button>
 						<button
 							type="button"
-							aria-label="Eliminar clave de {prov.name}"
+							aria-label="{$i18n('apikeys.deleteOf')} {prov.name}"
 							class="p-1 text-slate-500 hover:text-red-400 transition-colors"
 							onclick={() => remove(prov.id)}
 						>
@@ -178,7 +179,7 @@
 					{/if}
 					<button
 						type="button"
-						aria-label="Editar clave de {prov.name}"
+						aria-label="{$i18n('apikeys.editOf')} {prov.name}"
 						class="p-1 text-slate-500 hover:text-blue-400 transition-colors"
 						onclick={() => startEdit(prov.id)}
 					>
@@ -209,7 +210,7 @@
 							type="password"
 							bind:value={keyInput}
 							placeholder={prov.placeholder}
-							aria-label="Clave API de {prov.name}"
+							aria-label="{$i18n('apikeys.apiKeyOf')} {prov.name}"
 							class="flex-1 bg-slate-900 rounded-lg px-3 py-2 text-sm border {keyError ? 'border-red-500' : 'border-slate-600'} focus:border-blue-500 focus:outline-none transition-colors font-mono"
 							oninput={() => (keyError = '')}
 						/>
@@ -218,14 +219,14 @@
 							class="px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-sm font-medium transition-colors active:scale-95"
 							onclick={save}
 						>
-							Guardar
+							{$i18n('apikeys.save')}
 						</button>
 						<button
 							type="button"
 							class="px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
 							onclick={cancel}
 						>
-							Cancelar
+							{$i18n('apikeys.cancel')}
 						</button>
 					</div>
 					{#if keyError}

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Chat } from '$lib/types';
 	import { exportAsJson, exportAsMarkdown } from '$lib/utils/exportUtils';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	interface Props {
 		chat: Chat | null;
@@ -50,13 +51,13 @@
 
 {#if open && chat}
 	<!-- Backdrop -->
-	<button type="button" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onclick={close} aria-label="Cerrar"></button>
+	<button type="button" class="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm" onclick={close} aria-label={$i18n('settings.close')}></button>
 
 	<!-- Modal -->
 	<div class="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
-		<div bind:this={modalEl} onkeydown={handleKeydown} tabindex="-1" class="bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl p-6 w-80 pointer-events-auto animate-scale-in" role="dialog" aria-modal="true" aria-label="Exportar conversación">
-			<h3 class="text-lg font-semibold mb-1">Exportar conversación</h3>
+		<div bind:this={modalEl} onkeydown={handleKeydown} tabindex="-1" class="bg-slate-800 rounded-2xl border border-slate-700 shadow-2xl p-6 w-80 pointer-events-auto animate-scale-in" role="dialog" aria-modal="true" aria-label={$i18n('export.title')}>
+			<h3 class="text-lg font-semibold mb-1">{$i18n('export.title')}</h3>
 			<p class="text-sm text-slate-400 mb-5">"{chat.title}"</p>
 
 			<div class="space-y-3">
@@ -68,7 +69,7 @@
 					<span class="text-2xl">📋</span>
 					<div>
 						<div class="font-medium text-sm">JSON</div>
-						<div class="text-xs text-slate-400">Formato estructurado</div>
+						<div class="text-xs text-slate-400">{$i18n('export.json')}</div>
 					</div>
 				</button>
 
@@ -80,7 +81,7 @@
 					<span class="text-2xl">📝</span>
 					<div>
 						<div class="font-medium text-sm">Markdown</div>
-						<div class="text-xs text-slate-400">Formato legible</div>
+						<div class="text-xs text-slate-400">{$i18n('export.md')}</div>
 					</div>
 				</button>
 			</div>
@@ -90,7 +91,7 @@
 				class="mt-4 w-full py-2 text-sm text-slate-500 hover:text-slate-300 transition-colors"
 				onclick={close}
 			>
-				Cancelar
+				{$i18n('export.cancel')}
 			</button>
 		</div>
 	</div>

@@ -4,6 +4,7 @@
 	import { fileToAttachment, validateFile, getFileIcon, formatFileSize } from '$lib/utils/fileUtils';
 	import type { ModelDef } from '$lib/types';
 	import PromptLibrary from './PromptLibrary.svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	import { debounce } from '$lib/utils/perf';
 
@@ -143,7 +144,7 @@
 <div
 	class="relative border-t border-slate-800 bg-slate-900/50"
 	role="region"
-	aria-label="Área de entrada de mensaje"
+	aria-label={$i18n('chat.inputArea')}
 	ondragover={handleDragOver}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}
@@ -151,13 +152,13 @@
 	<!-- Drag overlay -->
 	{#if dragOver}
 		<div class="absolute inset-0 z-20 bg-blue-500/10 border-2 border-dashed border-blue-500 rounded-lg flex items-center justify-center">
-			<span class="text-blue-400 font-medium">Soltar archivos aquí</span>
+			<span class="text-blue-400 font-medium">{$i18n('chat.dropFiles')}</span>
 		</div>
 	{/if}
 
 	<!-- Mention suggestions popup -->
 	{#if showSuggestions}
-		<div class="absolute bottom-full left-4 mb-2 w-64 max-h-80 overflow-y-auto bg-slate-800 border border-slate-700 rounded-xl shadow-xl animate-scale-in z-50" role="listbox" aria-label="Sugerencias de modelos">
+		<div class="absolute bottom-full left-4 mb-2 w-64 max-h-80 overflow-y-auto bg-slate-800 border border-slate-700 rounded-xl shadow-xl animate-scale-in z-50" role="listbox" aria-label={$i18n('chat.modelSuggestions')}>
 			{#each suggestions.slice(0, 15) as model, idx (model.id)}
 				<button
 					type="button"
@@ -191,7 +192,7 @@
 					</div>
 					<button
 						type="button"
-						aria-label="Eliminar archivo {file.name}"
+						aria-label="{$i18n('chat.removeFile')} {file.name}"
 						class="text-slate-500 hover:text-red-400 transition-colors"
 						onclick={() => removeFile(i)}
 					>
@@ -207,11 +208,11 @@
 	<!-- Input row -->
 	<div class="flex items-end gap-2 p-3">
 		<!-- File upload button -->
-		<label class="shrink-0 p-2 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors text-slate-400 hover:text-slate-200" aria-label="Adjuntar archivos">
+		<label class="shrink-0 p-2 rounded-lg hover:bg-slate-800 cursor-pointer transition-colors text-slate-400 hover:text-slate-200" aria-label={$i18n('chat.attachFiles')}>
 			<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
 			</svg>
-			<input type="file" class="hidden" multiple onchange={(e) => handleFiles((e.target as HTMLInputElement).files)} aria-label="Seleccionar archivos para adjuntar" />
+			<input type="file" class="hidden" multiple onchange={(e) => handleFiles((e.target as HTMLInputElement).files)} aria-label={$i18n('chat.selectFiles')} />
 		</label>
 
 		<!-- Saved prompts -->
@@ -223,8 +224,8 @@
 			bind:value={text}
 			oninput={handleInput}
 			onkeydown={handleKeydown}
-			placeholder="Escribe un mensaje... (@modelo para mencionar)"
-			aria-label="Mensaje de chat"
+			placeholder={$i18n('chat.placeholder')}
+			aria-label={$i18n('chat.chatMessage')}
 			rows="1"
 			class="flex-1 resize-none bg-slate-800 rounded-xl px-4 py-3 text-sm border border-slate-700 focus:border-blue-500 focus:outline-none transition-colors placeholder:text-slate-500"
 			{disabled}
@@ -233,7 +234,7 @@
 		<!-- Send button -->
 		<button
 			type="button"
-			aria-label="Enviar mensaje"
+			aria-label={$i18n('chat.send')}
 			class="shrink-0 p-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 active:scale-95"
 			onclick={send}
 			disabled={disabled || (!text.trim() && files.length === 0)}

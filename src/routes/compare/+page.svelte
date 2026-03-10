@@ -4,6 +4,7 @@
 	import { getApiKey } from '$lib/stores/apiKeyStore';
 	import { routeMessageStreamIndependent } from '$lib/models/router';
 	import type { ModelDef, ModelProvider } from '$lib/types';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	let selected: ModelDef[] = $state([]);
 	let prompt = $state('');
@@ -58,7 +59,7 @@
 						[model.id]: {
 							...results[model.id],
 							loading: false,
-							error: err instanceof Error ? err.message : 'Error desconocido',
+							error: err instanceof Error ? err.message : $i18n('compare.unknownError'),
 							time: performance.now() - start
 						}
 					};
@@ -76,8 +77,8 @@
 <main id="main-content" class="flex flex-col h-full overflow-hidden">
 	<div class="p-4 border-b border-slate-800 shrink-0">
 		<div class="flex items-center gap-3 mb-3">
-			<a href="/" class="text-blue-400 hover:underline text-sm">← Volver</a>
-			<h1 class="text-lg font-bold text-white">⚡ Comparador de modelos</h1>
+			<a href="/" class="text-blue-400 hover:underline text-sm">{$i18n('compare.back')}</a>
+			<h1 class="text-lg font-bold text-white">⚡ {$i18n('compare.title')}</h1>
 		</div>
 
 		<!-- Model selection -->
@@ -96,14 +97,14 @@
 				</button>
 			{/each}
 		</div>
-		<p class="text-xs text-slate-500 mb-3">Selecciona 2-4 modelos ({selected.length}/4)</p>
+		<p class="text-xs text-slate-500 mb-3">{$i18n('compare.selectModels')} ({selected.length}/4)</p>
 
 		<!-- Prompt input -->
 		<div class="flex gap-2">
 			<input
 				type="text"
 				bind:value={prompt}
-				placeholder="Escribe tu prompt para comparar..."
+				placeholder={$i18n('compare.placeholder')}
 				class="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500"
 				onkeydown={(e) => { if (e.key === 'Enter') compare(); }}
 			/>
@@ -113,7 +114,7 @@
 				onclick={compare}
 				disabled={selected.length < 2 || !prompt.trim()}
 			>
-				Comparar
+				{$i18n('compare.button')}
 			</button>
 		</div>
 	</div>
@@ -155,7 +156,7 @@
 		{:else}
 			<div class="flex flex-col items-center justify-center h-full text-slate-500 text-sm">
 				<span class="text-4xl mb-4">⚡</span>
-				<p>Selecciona modelos y escribe un prompt para compararlos</p>
+				<p>{$i18n('compare.empty')}</p>
 			</div>
 		{/if}
 	</div>

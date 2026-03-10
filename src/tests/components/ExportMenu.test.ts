@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import ExportMenu from '$lib/components/ExportMenu.svelte';
+import { setLocale } from '$lib/stores/i18nStore';
 import type { Chat } from '$lib/types';
 
 const mockChat: Chat = {
@@ -16,6 +17,9 @@ const mockChat: Chat = {
 };
 
 describe('ExportMenu', () => {
+	beforeEach(() => {
+		setLocale('es');
+	});
 	it('renders nothing when closed', () => {
 		render(ExportMenu, { props: { chat: mockChat, open: false } });
 		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import ProviderIcon from '$lib/components/ProviderIcon.svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 	import {
 		ALL_DEBATE_CANDIDATES,
 		DEFAULT_PARTICIPANTS,
@@ -100,7 +101,7 @@
 					currentTurn = null;
 				},
 				onError(participant, errMsg) {
-					error = `Error en ${participant.name}: ${errMsg}`;
+						error = `${$i18n('debate.errorIn')} ${participant.name}: ${errMsg}`;
 				}
 			},
 			abortController.signal
@@ -121,9 +122,9 @@
 			<svg class="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
 			</svg>
-			Debate Multi-Modelo
+			{$i18n('debate.title')}
 		</h1>
-		<p class="text-xs text-slate-400 mt-1">Hasta 4 modelos debaten entre sí, leyendo las respuestas de los demás</p>
+		<p class="text-xs text-slate-400 mt-1">{$i18n('debate.subtitle')}</p>
 	</div>
 
 	<!-- Config panel -->
@@ -132,13 +133,13 @@
 			<!-- Participants selector -->
 			<div>
 				<div class="flex items-center justify-between mb-2">
-					<label class="text-xs text-slate-400 font-medium">Participantes ({participants.length}/{MAX_PARTICIPANTS})</label>
+					<label class="text-xs text-slate-400 font-medium">{$i18n('debate.participants')} ({participants.length}/{MAX_PARTICIPANTS})</label>
 					<button
 						type="button"
 						class="text-xs text-violet-400 hover:text-violet-300 transition-colors"
 						onclick={() => (selectorOpen = !selectorOpen)}
 					>
-						{selectorOpen ? 'Cerrar' : 'Cambiar'}
+						{selectorOpen ? $i18n('debate.close') : $i18n('debate.change')}
 					</button>
 				</div>
 
@@ -150,16 +151,16 @@
 							<ProviderIcon provider={p.provider} size={16} />
 							<span>{p.name}</span>
 							{#if hasKey}
-								<span class="w-2 h-2 rounded-full bg-green-500" title="API key configurada"></span>
-							{:else}
-								<span class="w-2 h-2 rounded-full bg-red-500" title="Falta API key"></span>
+						<span class="w-2 h-2 rounded-full bg-green-500" title={$i18n('debate.apiKeyConfigured')}></span>
+						{:else}
+						<span class="w-2 h-2 rounded-full bg-red-500" title={$i18n('debate.missingApiKey')}></span>
 							{/if}
 							{#if participants.length > MIN_PARTICIPANTS}
 								<button
 									type="button"
 									class="text-slate-500 hover:text-red-400 transition-colors -mr-1"
 									onclick={() => toggleParticipant(p)}
-									aria-label="Quitar {p.name}"
+									aria-label="{$i18n('debate.remove')} {p.name}"
 								>
 									<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
 								</button>
@@ -195,20 +196,20 @@
 							</button>
 						{/each}
 					</div>
-					<p class="text-xs text-slate-500 mt-2">Mínimo {MIN_PARTICIPANTS}, máximo {MAX_PARTICIPANTS} participantes</p>
+					<p class="text-xs text-slate-500 mt-2">{MIN_PARTICIPANTS}-{MAX_PARTICIPANTS} {$i18n('debate.minMax')}</p>
 				{/if}
 
 				{#if readiness.missing.length > 0}
 					<p class="text-xs text-red-400 mt-2">
-						Falta API key para: {readiness.missing.map((m) => m.name).join(', ')}.
-						Configúrala en Ajustes.
+						{$i18n('debate.missingKeys')} {readiness.missing.map((m) => m.name).join(', ')}.
+						{$i18n('debate.configureInSettings')}
 					</p>
 				{/if}
 			</div>
 
 			<!-- Topic -->
 			<div>
-				<label for="debate-topic" class="text-xs text-slate-400 font-medium mb-1 block">Tema del debate</label>
+				<label for="debate-topic" class="text-xs text-slate-400 font-medium mb-1 block">{$i18n('debate.topic')}</label>
 				<textarea
 					id="debate-topic"
 					bind:value={topic}
@@ -219,7 +220,7 @@
 
 			<!-- Rounds -->
 			<div class="flex items-center gap-3">
-				<label for="debate-rounds" class="text-xs text-slate-400 font-medium">Rondas</label>
+				<label for="debate-rounds" class="text-xs text-slate-400 font-medium">{$i18n('debate.rounds')}</label>
 				<input
 					id="debate-rounds"
 					type="number"
@@ -228,7 +229,7 @@
 					bind:value={rounds}
 					class="w-16 bg-slate-800/50 border border-slate-700 rounded-lg px-2 py-1 text-sm text-center focus:border-violet-500 focus:outline-none"
 				/>
-				<span class="text-xs text-slate-500">({rounds * participants.length} turnos totales)</span>
+				<span class="text-xs text-slate-500">({rounds * participants.length} {$i18n('debate.totalTurns')})</span>
 			</div>
 
 			<!-- Start -->
@@ -238,7 +239,7 @@
 				onclick={startDebate}
 				class="w-full py-2.5 rounded-lg bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 disabled:opacity-40 disabled:cursor-not-allowed font-medium text-sm transition-all"
 			>
-				Iniciar Debate ({participants.length} modelos, {rounds} rondas)
+				{$i18n('debate.start')} ({participants.length} {$i18n('debate.models')}, {rounds} {$i18n('debate.rounds').toLowerCase()})
 			</button>
 		</div>
 	{/if}
@@ -251,7 +252,7 @@
 				<div class="flex items-center gap-2 mb-2">
 					<ProviderIcon provider={msg.participant.provider} size={18} />
 					<span class="text-sm font-semibold">{msg.participant.name}</span>
-					<span class="text-xs text-slate-500 ml-auto">Ronda {msg.round}</span>
+					<span class="text-xs text-slate-500 ml-auto">{$i18n('debate.round')} {msg.round}</span>
 				</div>
 				<p class="text-sm text-slate-200 whitespace-pre-wrap">{msg.content}</p>
 			</div>
@@ -264,16 +265,16 @@
 				<div class="flex items-center gap-2 mb-2">
 					<ProviderIcon provider={currentTurn.participant.provider} size={18} />
 					<span class="text-sm font-semibold">{currentTurn.participant.name}</span>
-					<span class="text-xs text-slate-500 ml-auto">Ronda {currentTurn.round}</span>
+					<span class="text-xs text-slate-500 ml-auto">{$i18n('debate.round')} {currentTurn.round}</span>
 					<span class="inline-flex items-center gap-1 text-xs text-blue-400">
 						<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-						Escribiendo…
+						{$i18n('debate.writingLive')}
 					</span>
 				</div>
 				{#if streamingContent}
 					<p class="text-sm text-slate-200 whitespace-pre-wrap">{streamingContent}</p>
 				{:else}
-					<p class="text-sm text-slate-500 italic">Pensando…</p>
+					<p class="text-sm text-slate-500 italic">{$i18n('debate.thinkingLive')}</p>
 				{/if}
 			</div>
 		{/if}
@@ -286,13 +287,13 @@
 
 		{#if finished}
 			<div class="text-center py-4 space-y-3">
-				<p class="text-sm text-green-400 font-medium">Debate completado — {messages.length} intervenciones</p>
+				<p class="text-sm text-green-400 font-medium">{$i18n('debate.completed')} — {messages.length} {$i18n('debate.interventions')}</p>
 				<button
 					type="button"
 					onclick={() => { finished = false; messages = []; error = ''; }}
 					class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-sm transition-colors"
 				>
-					Nuevo debate
+					{$i18n('debate.newDebate')}
 				</button>
 			</div>
 		{/if}
@@ -306,7 +307,7 @@
 				onclick={stopDebate}
 				class="w-full py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium text-sm transition-colors"
 			>
-				Detener debate
+				{$i18n('debate.stop')}
 			</button>
 		</div>
 	{/if}

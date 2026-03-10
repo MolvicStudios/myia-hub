@@ -2,15 +2,17 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { toggleSidebar } from '$lib/stores/settingsStore';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	let showHelp = $state(false);
 
-	const SHORTCUTS = [
-		{ keys: 'Ctrl+N', desc: 'Nuevo chat' },
-		{ keys: 'Ctrl+B', desc: 'Toggle sidebar' },
-		{ keys: 'Ctrl+,', desc: 'Configuración' },
-		{ keys: 'Ctrl+/', desc: 'Atajos de teclado' },
-		{ keys: 'Escape', desc: 'Cerrar panel' }
+	// Shortcut keys defined statically; descriptions resolved in template via $i18n
+	const SHORTCUT_KEYS = [
+		{ keys: 'Ctrl+N', i18nKey: 'shortcuts.newChat' },
+		{ keys: 'Ctrl+B', i18nKey: 'shortcuts.toggleSidebar' },
+		{ keys: 'Ctrl+,', i18nKey: 'shortcuts.settings' },
+		{ keys: 'Ctrl+/', i18nKey: 'shortcuts.help' },
+		{ keys: 'Escape', i18nKey: 'shortcuts.close' }
 	];
 
 	onMount(() => {
@@ -58,13 +60,13 @@
 </script>
 
 {#if showHelp}
-	<button type="button" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" onclick={() => (showHelp = false)} aria-label="Cerrar"></button>
+	<button type="button" class="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm" onclick={() => (showHelp = false)} aria-label={$i18n('settings.close')}></button>
 	<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[70] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 w-80 animate-scale-in">
-		<h3 class="text-lg font-semibold text-slate-200 mb-4">Atajos de teclado</h3>
+		<h3 class="text-lg font-semibold text-slate-200 mb-4">{$i18n('shortcuts.title')}</h3>
 		<div class="space-y-2">
-			{#each SHORTCUTS as shortcut}
+			{#each SHORTCUT_KEYS as shortcut}
 				<div class="flex items-center justify-between text-sm">
-					<span class="text-slate-400">{shortcut.desc}</span>
+					<span class="text-slate-400">{$i18n(shortcut.i18nKey)}</span>
 					<kbd class="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-300">{shortcut.keys}</kbd>
 				</div>
 			{/each}
@@ -73,7 +75,7 @@
 			onclick={() => (showHelp = false)}
 			class="mt-4 w-full py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm text-slate-300 transition-colors"
 		>
-			Cerrar
+			{$i18n('shortcuts.closeBtn')}
 		</button>
 	</div>
 {/if}

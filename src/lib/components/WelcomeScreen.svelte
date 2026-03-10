@@ -4,6 +4,7 @@
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { goto } from '$app/navigation';
 	import Avatar from './Avatar.svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 	import type { ModelProvider } from '$lib/types';
 
 	function startChat(modelId: string, provider: ModelProvider) {
@@ -24,7 +25,7 @@
 
 	<h1 class="text-2xl font-bold mb-2">MyIA Hub</h1>
 	<p class="text-slate-400 text-sm mb-8 text-center max-w-md">
-		Tu hub de inteligencia artificial multimodelo. Elige un modelo para comenzar una conversación.
+		{$i18n('welcome.subtitle')}
 	</p>
 
 	<!-- Quick start models -->
@@ -43,7 +44,6 @@
 
 	<!-- Hint -->
 	<p class="text-xs text-slate-500 text-center">
-		Usa <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-400 text-[10px]">@modelo</kbd>
-		en un chat para dirigirte a un modelo específico
+		{$i18n('welcome.hint')}
 	</p>
 </div>

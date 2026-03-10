@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	let deferredPrompt: BeforeInstallPromptEvent | null = $state(null);
 	let dismissed = $state(false);
@@ -45,20 +46,20 @@
 		<div class="flex items-start gap-3">
 			<span class="text-2xl">📱</span>
 			<div class="flex-1">
-				<p class="text-sm font-medium text-slate-200">Instalar MyIA Hub</p>
-				<p class="text-xs text-slate-400 mt-0.5">Accede más rápido desde tu escritorio o móvil</p>
+				<p class="text-sm font-medium text-slate-200">{$i18n('pwa.install')}</p>
+				<p class="text-xs text-slate-400 mt-0.5">{$i18n('pwa.installDesc')}</p>
 				<div class="flex gap-2 mt-3">
 					<button
 						onclick={install}
 						class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs rounded-lg transition-colors"
 					>
-						Instalar
+						{$i18n('pwa.installBtn')}
 					</button>
 					<button
 						onclick={dismiss}
 						class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 text-slate-300 text-xs rounded-lg transition-colors"
 					>
-						Ahora no
+						{$i18n('pwa.later')}
 					</button>
 				</div>
 			</div>

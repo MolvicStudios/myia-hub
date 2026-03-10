@@ -3,6 +3,7 @@
 	import type { ModelDef } from '$lib/types';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import ProviderIcon from './ProviderIcon.svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	interface Props {
 		onchange?: (model: ModelDef) => void;
@@ -68,9 +69,9 @@
 		}
 	}
 
-	const SPEED_LABEL = { fast: '⚡ Rápido', medium: '🔄 Medio', slow: '🐢 Lento' };
+	const SPEED_LABEL_KEYS: Record<string, string> = { fast: 'model.fast', medium: 'model.medium', slow: 'model.slow' };
 	const COST_LABEL: Record<string, string> = {
-		free: '🆓 Gratis',
+		free: '🆓',
 		low: '💲 ~$0.001/msg',
 		medium: '💲💲 ~$0.01/msg',
 		high: '💲💲💲 ~$0.05/msg'
@@ -83,7 +84,7 @@
 		type="button"
 		aria-haspopup="listbox"
 		aria-expanded={open}
-		aria-label="Selector de modelo: {current.name}"
+		aria-label="{$i18n('model.selector')}: {current.name}"
 		class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-colors duration-200 text-sm"
 		onclick={() => (open = !open)}
 		onkeydown={handleKeydown}
@@ -98,15 +99,15 @@
 	<!-- Dropdown -->
 	{#if open}
 		<!-- Backdrop -->
-		<button type="button" class="fixed inset-0 z-40" onclick={() => { open = false; search = ''; }} aria-label="Cerrar"></button>
+		<button type="button" class="fixed inset-0 z-40" onclick={() => { open = false; search = ''; }} aria-label={$i18n('settings.close')}></button>
 
-		<div class="absolute top-full left-0 mt-2 w-80 z-50 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden animate-scale-in" role="listbox" aria-label="Lista de modelos">
+		<div class="absolute top-full left-0 mt-2 w-80 z-50 bg-slate-800 border border-slate-700 rounded-xl shadow-xl overflow-hidden animate-scale-in" role="listbox" aria-label={$i18n('model.list')}>
 			<!-- Search -->
 			<div class="p-2 border-b border-slate-700">
 				<input
 					type="text"
-					placeholder="Buscar modelo..."
-					aria-label="Buscar modelo"
+					placeholder={$i18n('model.search')}
+					aria-label={$i18n('model.searchLabel')}
 					class="w-full px-3 py-2 bg-slate-900 rounded-lg text-sm border border-slate-600 focus:border-blue-500 focus:outline-none transition-colors"
 					bind:value={search}
 				/>
@@ -129,7 +130,7 @@
 						<div class="flex-1 min-w-0">
 							<div class="font-medium text-sm">{model.name}</div>
 							<div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-								<span>{SPEED_LABEL[model.speed]}</span>
+								<span>{$i18n(SPEED_LABEL_KEYS[model.speed])}</span>
 								<span>{COST_LABEL[model.costTier]}</span>
 								<span class="truncate">{model.capabilities.join(', ')}</span>
 							</div>

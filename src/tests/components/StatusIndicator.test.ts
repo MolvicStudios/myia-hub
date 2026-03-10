@@ -1,8 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/svelte';
 import StatusIndicator from '$lib/components/StatusIndicator.svelte';
+import { setLocale } from '$lib/stores/i18nStore';
 
 describe('StatusIndicator', () => {
+	beforeEach(() => {
+		setLocale('es');
+	});
+
 	it('renders with status role and aria-live', () => {
 		render(StatusIndicator, { props: { state: 'idle', model: 'gpt-4o', provider: 'openai' } });
 		const indicator = screen.getByRole('status');

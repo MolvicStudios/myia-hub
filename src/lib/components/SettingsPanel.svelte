@@ -25,7 +25,7 @@
 	}
 
 	function handleClearMemory() {
-		if (confirm('¿Borrar toda la memoria local?')) {
+		if (confirm($i18n('settings.clearMemoryConfirm'))) {
 			clearAllMemory();
 		}
 	}
@@ -53,15 +53,15 @@
 
 {#if open}
 	<!-- Backdrop -->
-	<button type="button" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onclick={close} aria-label="Cerrar"></button>
+	<button type="button" class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onclick={close} aria-label={$i18n('settings.close')}></button>
 
 	<!-- Panel -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div bind:this={panelEl} onkeydown={handleKeydown} tabindex="-1" class="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-slate-900 border-l border-slate-800 shadow-2xl animate-slide-right overflow-y-auto" role="dialog" aria-modal="true" aria-label="Panel de configuración">
+	<div bind:this={panelEl} onkeydown={handleKeydown} tabindex="-1" class="fixed right-0 top-0 bottom-0 z-50 w-full max-w-md bg-slate-900 border-l border-slate-800 shadow-2xl animate-slide-right overflow-y-auto" role="dialog" aria-modal="true" aria-label={$i18n('settings.panelLabel')}>
 		<!-- Header -->
 		<div class="flex items-center justify-between p-4 border-b border-slate-800 sticky top-0 bg-slate-900/95 backdrop-blur-sm z-10">
-			<h2 class="text-lg font-semibold">Configuración</h2>
-			<button type="button" class="p-2 rounded-lg hover:bg-slate-800 transition-colors" onclick={close} aria-label="Cerrar configuración">
+			<h2 class="text-lg font-semibold">{$i18n('settings.title')}</h2>
+			<button type="button" class="p-2 rounded-lg hover:bg-slate-800 transition-colors" onclick={close} aria-label={$i18n('settings.closeSettings')}>
 				<svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
 				</svg>
@@ -69,12 +69,12 @@
 		</div>
 
 		<!-- Tabs -->
-		<div class="flex border-b border-slate-800" role="tablist" aria-label="Secciones de configuración">
+		<div class="flex border-b border-slate-800" role="tablist" aria-label={$i18n('settings.sections')}>
 			{#each [
-				{ id: 'api', label: '🔑 APIs' },
+				{ id: 'api', label: $i18n('settings.apis') },
 				...(showOllama ? [{ id: 'ollama', label: '🦙 Ollama' }] : []),
-				{ id: 'prefs', label: '⚙️ Prefs' },
-				{ id: 'memory', label: '🧠 Memoria' }
+				{ id: 'prefs', label: $i18n('settings.prefs') },
+				{ id: 'memory', label: $i18n('settings.memory') }
 			] as tab (tab.id)}
 				<button
 					type="button"
@@ -100,13 +100,13 @@
 				<div class="space-y-4">
 					<!-- Theme -->
 					<div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
-						<div class="text-sm font-medium mb-2">Tema</div>
+						<div class="text-sm font-medium mb-2">{$i18n('settings.theme')}</div>
 						<div class="grid grid-cols-2 gap-2">
 							{#each [
-								{ id: 'dark', label: '🌙 Oscuro', bg: '#0f172a', fg: '#e2e8f0' },
-								{ id: 'light', label: '☀️ Claro', bg: '#f8fafc', fg: '#1e293b' },
-								{ id: 'solarized', label: '🌊 Solarized', bg: '#002b36', fg: '#93a1a1' },
-								{ id: 'nord', label: '❄️ Nord', bg: '#2e3440', fg: '#d8dee9' }
+							{ id: 'dark', label: $i18n('theme.dark'), bg: '#0f172a', fg: '#e2e8f0' },
+							{ id: 'light', label: $i18n('theme.light'), bg: '#f8fafc', fg: '#1e293b' },
+							{ id: 'solarized', label: $i18n('theme.solarized'), bg: '#002b36', fg: '#93a1a1' },
+							{ id: 'nord', label: $i18n('theme.nord'), bg: '#2e3440', fg: '#d8dee9' }
 							] as theme (theme.id)}
 								<button
 									type="button"
@@ -124,7 +124,7 @@
 
 					<!-- Default model -->
 					<div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
-						<div class="text-sm font-medium mb-2">Modelo por defecto</div>
+						<div class="text-sm font-medium mb-2">{$i18n('settings.defaultModel')}</div>
 						<select
 							class="w-full bg-slate-900 rounded-lg px-3 py-2 text-sm border border-slate-600 focus:border-blue-500 focus:outline-none"
 							value={$settings.defaultModel}
@@ -167,14 +167,14 @@
 					<!-- Memory toggle -->
 					<div class="flex items-center justify-between bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
 						<div>
-							<div class="text-sm font-medium">Memoria local</div>
-							<div class="text-xs text-slate-500">Recordar contexto entre sesiones</div>
+							<div class="text-sm font-medium">{$i18n('settings.memoryLocal')}</div>
+							<div class="text-xs text-slate-500">{$i18n('settings.memoryDesc')}</div>
 						</div>
 						<button
 							type="button"
 							role="switch"
 							aria-checked={$settings.memoryEnabled}
-							aria-label="Activar memoria local"
+							aria-label={$i18n('settings.enableMemory')}
 							class="w-12 h-6 rounded-full transition-colors {$settings.memoryEnabled ? 'bg-blue-600' : 'bg-slate-600'}"
 							onclick={() => updateSetting('memoryEnabled', !$settings.memoryEnabled)}
 						>
@@ -188,7 +188,7 @@
 						class="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-sm font-medium transition-colors"
 						onclick={handleClearMemory}
 					>
-						🗑️ Borrar toda la memoria
+						{$i18n('settings.clearMemory')}
 					</button>
 				</div>
 			{/if}

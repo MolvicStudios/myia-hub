@@ -1,8 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import ChatInput from '$lib/components/ChatInput.svelte';
+import { setLocale } from '$lib/stores/i18nStore';
 
 describe('ChatInput', () => {
+	beforeEach(() => {
+		setLocale('es');
+	});
+
 	it('renders with region role and label', () => {
 		render(ChatInput);
 		const region = screen.getByRole('region');

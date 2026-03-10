@@ -1,8 +1,13 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import ModelSelector from '$lib/components/ModelSelector.svelte';
+import { setLocale } from '$lib/stores/i18nStore';
 
 describe('ModelSelector', () => {
+	beforeEach(() => {
+		setLocale('es');
+	});
+
 	it('renders trigger button with model name', () => {
 		render(ModelSelector);
 		const btn = screen.getByRole('button', { name: /selector de modelo/i });
