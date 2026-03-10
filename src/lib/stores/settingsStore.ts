@@ -38,15 +38,27 @@ export function toggleSidebar() {
 	settings.update((s) => ({ ...s, sidebarOpen: !s.sidebarOpen }));
 }
 
-/** Toggle theme */
+/** Cycle through themes */
+const THEMES: UserSettings['theme'][] = ['dark', 'light', 'solarized', 'nord'];
+
 export function toggleTheme() {
-	settings.update((s) => ({
-		...s,
-		theme: s.theme === 'dark' ? 'light' : 'dark'
-	}));
-	const $s = get(settings);
-	if (typeof document !== 'undefined') {
-		document.documentElement.classList.toggle('dark', $s.theme === 'dark');
-		document.documentElement.classList.toggle('light', $s.theme === 'light');
-	}
+	settings.update((s) => {
+		const idx = THEMES.indexOf(s.theme);
+		const next = THEMES[(idx + 1) % THEMES.length];
+		return { ...s, theme: next };
+	});
+	applyTheme(get(settings).theme);
+}
+
+/** Set a specific theme */
+export function setTheme(theme: UserSettings['theme']) {
+	updateSetting('theme', theme);
+	applyTheme(theme);
+}
+
+/** Apply theme class to document */
+export function applyTheme(theme: string) {
+	if (typeof document === 'undefined') return;
+	document.documentElement.classList.remove('dark', 'light', 'solarized', 'nord');
+	document.documentElement.classList.add(theme);
 }

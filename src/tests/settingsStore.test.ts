@@ -40,6 +40,10 @@ describe('settingsStore', () => {
 		toggleTheme();
 		expect(get(settings).theme).toBe('light');
 		toggleTheme();
+		expect(get(settings).theme).toBe('solarized');
+		toggleTheme();
+		expect(get(settings).theme).toBe('nord');
+		toggleTheme();
 		expect(get(settings).theme).toBe('dark');
 	});
 

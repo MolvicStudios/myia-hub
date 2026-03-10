@@ -4,7 +4,10 @@
 	import ModelSelector from '$lib/components/ModelSelector.svelte';
 	import StatusIndicator from '$lib/components/StatusIndicator.svelte';
 	import SettingsPanel from '$lib/components/SettingsPanel.svelte';
-	import { settings, toggleSidebar } from '$lib/stores/settingsStore';
+	import CookieBanner from '$lib/components/CookieBanner.svelte';
+	import InstallPrompt from '$lib/components/InstallPrompt.svelte';
+	import KeyboardShortcuts from '$lib/components/KeyboardShortcuts.svelte';
+	import { settings, toggleSidebar, applyTheme } from '$lib/stores/settingsStore';
 	import { avatarState, selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { loadChats } from '$lib/stores/chatStore';
 	import { onMount } from 'svelte';
@@ -15,16 +18,18 @@
 
 	onMount(() => {
 		loadChats();
-		// Apply saved theme to HTML element
-		const theme = $settings.theme;
-		document.documentElement.classList.toggle('dark', theme === 'dark');
-		document.documentElement.classList.toggle('light', theme === 'light');
+		// Apply saved theme
+		applyTheme($settings.theme);
 		// Sync default model from settings
 		const defaultDef = getModelDef($settings.defaultModel);
 		if (defaultDef) {
 			$selectedModel = defaultDef.id;
 			$selectedProvider = defaultDef.provider;
 		}
+		// Listen for open-settings event from keyboard shortcuts
+		function openSettings() { settingsOpen = true; }
+		window.addEventListener('myia:open-settings', openSettings);
+		return () => window.removeEventListener('myia:open-settings', openSettings);
 	});
 </script>
 
@@ -103,6 +108,10 @@
 
 		<!-- Footer legal links -->
 		<footer class="shrink-0 flex items-center justify-center gap-4 px-4 py-1.5 text-xs text-slate-500 border-t border-slate-800/50">
+			<a href="/tutorial" class="hover:text-slate-300 transition-colors">Tutorial</a>
+			<span>·</span>
+			<a href="/compare" class="hover:text-slate-300 transition-colors">Comparador</a>
+			<span>·</span>
 			<a href="/privacy" class="hover:text-slate-300 transition-colors">Privacidad</a>
 			<span>·</span>
 			<a href="/cookies" class="hover:text-slate-300 transition-colors">Cookies</a>
@@ -112,3 +121,8 @@
 	<!-- Settings panel -->
 	<SettingsPanel bind:open={settingsOpen} />
 </div>
+
+<!-- Global overlays -->
+<CookieBanner />
+<InstallPrompt />
+<KeyboardShortcuts />

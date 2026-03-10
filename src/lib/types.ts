@@ -78,7 +78,7 @@ export interface ApiKeyEntry {
 }
 
 export interface UserSettings {
-	theme: 'dark' | 'light';
+	theme: 'dark' | 'light' | 'solarized' | 'nord';
 	defaultModel: string;
 	memoryEnabled: boolean;
 	memoryPerModel: Record<string, boolean>;

@@ -3,6 +3,7 @@
 	import { getModelSuggestions, isInMentionContext } from '$lib/utils/mentionParser';
 	import { fileToAttachment, validateFile, getFileIcon, formatFileSize } from '$lib/utils/fileUtils';
 	import type { ModelDef } from '$lib/types';
+	import PromptLibrary from './PromptLibrary.svelte';
 
 	import { debounce } from '$lib/utils/perf';
 
@@ -212,6 +213,9 @@
 			</svg>
 			<input type="file" class="hidden" multiple onchange={(e) => handleFiles((e.target as HTMLInputElement).files)} aria-label="Seleccionar archivos para adjuntar" />
 		</label>
+
+		<!-- Saved prompts -->
+		<PromptLibrary onSelect={(t) => { text = t; textareaEl?.focus(); }} />
 
 		<!-- Textarea -->
 		<textarea

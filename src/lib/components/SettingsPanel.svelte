@@ -1,8 +1,9 @@
 <script lang="ts">
 	import ApiKeyManager from './ApiKeyManager.svelte';
-	import { settings, updateSetting, toggleTheme } from '$lib/stores/settingsStore';
+	import { settings, updateSetting, setTheme } from '$lib/stores/settingsStore';
 	import { clearAllMemory } from '$lib/stores/memoryStore';
 	import { MODEL_REGISTRY } from '$lib/models/registry';
+	import { locale, setLocale, i18n } from '$lib/stores/i18nStore';
 	import { onMount } from 'svelte';
 
 	interface Props {
@@ -91,18 +92,27 @@
 			{:else if activeTab === 'prefs'}
 				<div class="space-y-4">
 					<!-- Theme -->
-					<div class="flex items-center justify-between bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
-						<div>
-							<div class="text-sm font-medium">Tema</div>
-							<div class="text-xs text-slate-500">{$settings.theme === 'dark' ? '🌙 Oscuro' : '☀️ Claro'}</div>
+					<div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+						<div class="text-sm font-medium mb-2">Tema</div>
+						<div class="grid grid-cols-2 gap-2">
+							{#each [
+								{ id: 'dark', label: '🌙 Oscuro', bg: '#0f172a', fg: '#e2e8f0' },
+								{ id: 'light', label: '☀️ Claro', bg: '#f8fafc', fg: '#1e293b' },
+								{ id: 'solarized', label: '🌊 Solarized', bg: '#002b36', fg: '#93a1a1' },
+								{ id: 'nord', label: '❄️ Nord', bg: '#2e3440', fg: '#d8dee9' }
+							] as theme (theme.id)}
+								<button
+									type="button"
+									class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-all {$settings.theme === theme.id
+										? 'border-blue-500 ring-1 ring-blue-500/50'
+										: 'border-slate-700 hover:border-slate-600'}"
+									onclick={() => setTheme(theme.id as import('$lib/types').UserSettings['theme'])}
+								>
+									<span class="w-4 h-4 rounded-full border border-slate-600 shrink-0" style="background:{theme.bg}"></span>
+									{theme.label}
+								</button>
+							{/each}
 						</div>
-						<button
-							type="button"
-							class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm transition-colors"
-							onclick={toggleTheme}
-						>
-							Cambiar
-						</button>
 					</div>
 
 					<!-- Default model -->
@@ -117,6 +127,27 @@
 								<option value={model.id}>{model.name}</option>
 							{/each}
 						</select>
+					</div>
+
+					<!-- Language -->
+					<div class="bg-slate-800/50 rounded-xl p-3 border border-slate-700/50">
+						<div class="text-sm font-medium mb-2">{$i18n('settings.language')}</div>
+						<div class="flex gap-2">
+							<button
+								type="button"
+								class="flex-1 py-2 rounded-lg text-sm transition-all {$locale === 'es' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}"
+								onclick={() => setLocale('es')}
+							>
+								🇪🇸 Español
+							</button>
+							<button
+								type="button"
+								class="flex-1 py-2 rounded-lg text-sm transition-all {$locale === 'en' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'}"
+								onclick={() => setLocale('en')}
+							>
+								🇬🇧 English
+							</button>
+						</div>
 					</div>
 				</div>
 			{:else if activeTab === 'memory'}
