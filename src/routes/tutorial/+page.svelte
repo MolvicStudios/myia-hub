@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { createChat } from '$lib/stores/chatStore';
+	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { goto } from '$app/navigation';
 	import type { ModelProvider } from '$lib/types';
 
@@ -105,7 +106,10 @@
 			openrouter: 'openrouter/auto',
 			ollama: 'llama3.2:3b'
 		};
-		const id = createChat(models[provider] ?? 'gpt-4o', provider);
+		const modelId = models[provider] ?? 'gpt-4o';
+		$selectedModel = modelId;
+		$selectedProvider = provider;
+		const id = createChat(modelId, provider);
 		goto(`/chat/${id}`);
 	}
 </script>

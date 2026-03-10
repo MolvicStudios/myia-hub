@@ -2,7 +2,7 @@
 	import Avatar from '$lib/components/Avatar.svelte';
 	import { MODEL_REGISTRY } from '$lib/models/registry';
 	import { getApiKey } from '$lib/stores/apiKeyStore';
-	import { routeMessageStream, abortActiveRequest } from '$lib/models/router';
+	import { routeMessageStreamIndependent } from '$lib/models/router';
 	import type { ModelDef, ModelProvider } from '$lib/types';
 
 	let selected: ModelDef[] = $state([]);
@@ -34,7 +34,7 @@
 			selected.map(async (model) => {
 				const start = performance.now();
 				try {
-					await routeMessageStream(
+					await routeMessageStreamIndependent(
 						{
 							model: model.id,
 							provider: model.provider,

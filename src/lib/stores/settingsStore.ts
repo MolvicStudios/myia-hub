@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import { browser } from '$app/environment';
 import type { UserSettings } from '$lib/types';
 
 const STORAGE_KEY = 'myia_settings';
@@ -12,6 +13,7 @@ const defaults: UserSettings = {
 };
 
 function loadSettings(): UserSettings {
+	if (!browser) return { ...defaults };
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw) return { ...defaults, ...JSON.parse(raw) };
@@ -23,6 +25,7 @@ export const settings = writable<UserSettings>(loadSettings());
 
 /** Persist settings to localStorage on every change */
 settings.subscribe(($s) => {
+	if (!browser) return;
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify($s));
 	} catch { /* storage full */ }

@@ -78,6 +78,35 @@ export async function routeMessageStream(
 	}
 }
 
+/** Independent streaming — each call gets its own AbortController (for comparator) */
+export async function routeMessageStreamIndependent(
+	payload: ModelRequestPayload,
+	onChunk: (text: string) => void,
+	externalSignal?: AbortSignal
+): Promise<ModelResponse> {
+	const client = clients[payload.provider];
+	if (!client) throw new Error(`Proveedor desconocido: ${payload.provider}`);
+
+	const apiKey = getApiKey(payload.provider) ?? '';
+	if (!apiKey && payload.provider !== 'ollama') {
+		throw new Error(`No hay API key configurada para ${payload.provider}. Ve a Configuración para añadirla.`);
+	}
+
+	const controller = new AbortController();
+	if (externalSignal) {
+		externalSignal.addEventListener('abort', () => controller.abort(), { once: true });
+	}
+
+	try {
+		if (client.sendStream) {
+			return await client.sendStream(payload, apiKey, onChunk, controller.signal);
+		}
+		return await client.send(payload, apiKey, controller.signal);
+	} finally {
+		// no shared state to clean up
+	}
+}
+
 /** Get an available client */
 export function getClient(provider: ModelProvider): ModelClient {
 	return clients[provider];

@@ -1,4 +1,5 @@
 import { writable, get } from 'svelte/store';
+import { browser } from '$app/environment';
 import type { ApiKeyEntry, ModelProvider } from '$lib/types';
 
 const STORAGE_KEY = 'myia_apikeys';
@@ -22,6 +23,7 @@ function deobfuscate(encoded: string, key = 'myia-salt-2024'): string {
 }
 
 function loadKeys(): ApiKeyEntry[] {
+	if (!browser) return [];
 	try {
 		const raw = localStorage.getItem(STORAGE_KEY);
 		if (raw) return JSON.parse(raw);
@@ -33,6 +35,7 @@ export const apiKeys = writable<ApiKeyEntry[]>(loadKeys());
 
 // Persist on change
 apiKeys.subscribe(($keys) => {
+	if (!browser) return;
 	try {
 		localStorage.setItem(STORAGE_KEY, JSON.stringify($keys));
 	} catch { /* ignore */ }
@@ -54,6 +57,14 @@ export function saveApiKey(provider: ModelProvider, rawKey: string) {
 
 /** Get decrypted API key for a provider */
 export function getApiKey(provider: ModelProvider): string | null {
+	// Re-read from localStorage on client if store is empty (handles SSR → client hydration)
+	if (browser) {
+		const current = get(apiKeys);
+		if (current.length === 0) {
+			const fresh = loadKeys();
+			if (fresh.length > 0) apiKeys.set(fresh);
+		}
+	}
 	const entry = get(apiKeys).find((k) => k.provider === provider);
 	if (!entry) return null;
 	try {
