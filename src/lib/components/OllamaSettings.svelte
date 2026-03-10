@@ -22,9 +22,12 @@
 				models
 			};
 		} catch (e) {
+			const isCors = e instanceof TypeError && (e.message.includes('Failed to fetch') || e.message.includes('NetworkError'));
 			testResult = {
 				ok: false,
-				message: 'No se pudo conectar con Ollama. ¿Está ejecutándose?'
+				message: isCors
+					? 'Error CORS: Ollama no permite conexiones desde este origen. Configura OLLAMA_ORIGINS (ver tutorial abajo).'
+					: 'No se pudo conectar con Ollama. ¿Está ejecutándose?'
 			};
 		} finally {
 			testing = false;
@@ -131,7 +134,18 @@
 						<p class="text-slate-300 font-medium mt-3">2. Descargar un modelo:</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">ollama pull llama3.2:3b</code>
 
-						<p class="text-slate-300 font-medium mt-3">3. Verificar que funciona:</p>
+						<p class="text-slate-300 font-medium mt-3">3. Permitir conexión desde MyIA Hub (CORS):</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">sudo systemctl stop ollama
+OLLAMA_ORIGINS="https://myia.pro" ollama serve</code>
+						<p class="text-xs text-slate-500">O para hacerlo permanente, edita el servicio:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">sudo systemctl edit ollama</code>
+						<p class="text-xs text-slate-500">Añade estas líneas y guarda:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-yellow-300 select-all">[Service]
+Environment="OLLAMA_ORIGINS=https://myia.pro"</code>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all mt-1">sudo systemctl daemon-reload
+sudo systemctl restart ollama</code>
+
+						<p class="text-slate-300 font-medium mt-3">4. Verificar que funciona:</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">curl http://localhost:11434</code>
 						<p class="text-xs text-slate-500">Debe responder: "Ollama is running"</p>
 					</div>
@@ -143,10 +157,18 @@
 						<p class="text-slate-300 font-medium mt-3">2. Instalar y ejecutar:</p>
 						<p class="text-xs text-slate-400">Ejecuta el instalador. Ollama se inicia automáticamente en la bandeja del sistema.</p>
 
-						<p class="text-slate-300 font-medium mt-3">3. Abrir PowerShell y descargar un modelo:</p>
+						<p class="text-slate-300 font-medium mt-3">3. Permitir conexión desde MyIA Hub (CORS):</p>
+						<p class="text-xs text-slate-400">Cierra Ollama de la bandeja del sistema. Abre PowerShell y ejecuta:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">$env:OLLAMA_ORIGINS="https://myia.pro"
+ollama serve</code>
+						<p class="text-xs text-slate-500">Para hacerlo permanente, crea una variable de entorno del sistema:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">[System.Environment]::SetEnvironmentVariable('OLLAMA_ORIGINS', 'https://myia.pro', 'User')</code>
+						<p class="text-xs text-slate-500">Reinicia Ollama después de configurar la variable.</p>
+
+						<p class="text-slate-300 font-medium mt-3">4. Abrir PowerShell y descargar un modelo:</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">ollama pull llama3.2:3b</code>
 
-						<p class="text-slate-300 font-medium mt-3">4. Verificar:</p>
+						<p class="text-slate-300 font-medium mt-3">5. Verificar:</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">ollama list</code>
 					</div>
 				{:else}
@@ -154,8 +176,10 @@
 						<p class="text-slate-300 font-medium">1. Instalar con Homebrew (o descarga desde ollama.com):</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">brew install ollama</code>
 
-						<p class="text-slate-300 font-medium mt-3">2. Iniciar el servicio:</p>
-						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">ollama serve</code>
+						<p class="text-slate-300 font-medium mt-3">2. Permitir conexión desde MyIA Hub e iniciar:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">OLLAMA_ORIGINS="https://myia.pro" ollama serve</code>
+						<p class="text-xs text-slate-500">Para hacerlo permanente, añade al archivo ~/.zshrc o ~/.bashrc:</p>
+						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-yellow-300 select-all">export OLLAMA_ORIGINS="https://myia.pro"</code>
 
 						<p class="text-slate-300 font-medium mt-3">3. En otra terminal, descargar un modelo:</p>
 						<code class="block bg-slate-900 rounded-lg px-3 py-2 font-mono text-xs text-green-400 select-all">ollama pull llama3.2:3b</code>
