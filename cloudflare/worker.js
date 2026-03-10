@@ -5,6 +5,7 @@
  */
 
 const ALLOWED_ORIGINS = [
+	'https://myia.pro',
 	'https://myia-hub.pages.dev',
 	'http://localhost:5173',
 	'http://localhost:4173'
