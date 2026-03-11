@@ -4,6 +4,8 @@
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { goto } from '$app/navigation';
 	import Avatar from './Avatar.svelte';
+	import AdBlock from './AdBlock.svelte';
+	import DailyPrompt from './DailyPrompt.svelte';
 	import { i18n } from '$lib/stores/i18nStore';
 	import type { ModelProvider } from '$lib/types';
 
@@ -19,7 +21,7 @@
 	<!-- Logo / Hero avatar -->
 	<div class="mb-6">
 		<div class="w-20 h-20 rounded-2xl shadow-lg shadow-blue-500/25 animate-bounce-subtle overflow-hidden">
-			<img src="/favicon.svg" alt="MyIA Hub" width="80" height="80" class="w-full h-full" />
+	<img src="/favicon.svg" alt="MyIA Hub - Hub de chat con inteligencia artificial multimodelo" width="80" height="80" class="w-full h-full" />
 		</div>
 	</div>
 
@@ -42,8 +44,25 @@
 		{/each}
 	</div>
 
+	<!-- Daily prompt suggestion -->
+	<DailyPrompt onuse={(prompt) => {
+		const models = getAvailableModels();
+		if (models.length > 0) {
+			const m = models[0];
+			$selectedModel = m.id;
+			$selectedProvider = m.provider;
+			const id = createChat(m.id, m.provider);
+			goto(`/chat/${id}`);
+		}
+	}} />
+
 	<!-- Hint -->
 	<p class="text-xs text-slate-500 text-center">
 		{$i18n('welcome.hint')}
 	</p>
+
+	<!-- Ad block -->
+	<div class="w-full max-w-lg mt-6">
+		<AdBlock format="horizontal" minHeight={100} />
+	</div>
 </div>

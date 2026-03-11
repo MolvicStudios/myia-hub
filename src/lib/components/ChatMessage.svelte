@@ -76,7 +76,7 @@
 			{#if message.images?.length}
 				<div class="flex flex-wrap gap-2 mt-2">
 					{#each message.images as img}
-						<img src={img} alt={$i18n('chat.attachment')} loading="lazy" class="max-w-48 max-h-48 rounded-lg object-cover" />
+						<img src={img} alt="{$i18n('chat.attachment')} - {$i18n('chat.assistantResponse')} {message.model ?? 'IA'}" loading="lazy" class="max-w-48 max-h-48 rounded-lg object-cover" />
 					{/each}
 				</div>
 			{/if}

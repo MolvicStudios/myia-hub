@@ -3,10 +3,22 @@
 
 	let visible = $state(false);
 
+	/** Load AdSense script dynamically */
+	function loadAdSense() {
+		if (typeof document === 'undefined') return;
+		if (document.querySelector('script[src*="adsbygoogle"]')) return;
+		const s = document.createElement('script');
+		s.async = true;
+		s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1513893788851225';
+		s.crossOrigin = 'anonymous';
+		document.head.appendChild(s);
+	}
+
 	function checkConsent() {
 		try {
 			const consent = localStorage.getItem('myia_cookie_consent');
-			if (!consent) visible = true;
+			if (!consent) { visible = true; return; }
+			if (consent === 'accepted') loadAdSense();
 		} catch {
 			visible = true;
 		}
@@ -15,6 +27,7 @@
 	function accept() {
 		try { localStorage.setItem('myia_cookie_consent', 'accepted'); } catch {}
 		visible = false;
+		loadAdSense();
 	}
 
 	function reject() {

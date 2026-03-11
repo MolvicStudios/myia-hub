@@ -37,6 +37,8 @@
 
 	let userScrolledUp = $state(false);
 
+	let chatTitle = $derived(chat?.title ?? 'Chat');
+
 	function handleScroll() {
 		if (!chatContainerEl) return;
 		const { scrollTop, scrollHeight, clientHeight } = chatContainerEl;
@@ -57,10 +59,16 @@
 	}
 </script>
 
+<svelte:head>
+	<title>{chatTitle} — MyIA Hub</title>
+	<meta name="description" content="Conversación en MyIA Hub con modelos de inteligencia artificial." />
+</svelte:head>
+
 {#if chat}
 	<div class="flex flex-col h-full">
 		<!-- Chat header -->
 		<div class="flex items-center justify-between px-4 py-2 border-b border-slate-800/50">
+			<h1 class="sr-only">{chatTitle} — MyIA Hub</h1>
 			<h2 class="text-sm font-medium truncate">{chat.title}</h2>
 			<button
 				type="button"

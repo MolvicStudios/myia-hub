@@ -23,6 +23,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Configuración — MyIA Hub</title>
+	<meta name="description" content="Gestiona tus claves API, preferencias y memoria local en MyIA Hub." />
+</svelte:head>
+
 <div class="max-w-2xl mx-auto px-4 py-8 space-y-8 overflow-y-auto h-full">
 	<div>
 		<h1 class="text-2xl font-bold mb-1">{$i18n('settings.title')}</h1>

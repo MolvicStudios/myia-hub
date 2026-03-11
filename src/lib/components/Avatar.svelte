@@ -44,7 +44,7 @@
 	class="relative inline-flex items-center justify-center rounded-full transition-all duration-300 {sizeClass} {stateClass}"
 	style="background: {color}20; color: {color}; border: 2px solid {color}40;"
 	role="img"
-	aria-label="{provider} avatar, estado: {state === 'idle' ? 'listo' : state === 'loading' ? 'cargando' : state === 'typing' ? 'escribiendo' : 'error'}"
+	aria-label="{model ? model + ' (' + provider + ')' : provider} avatar, estado: {state === 'idle' ? 'listo' : state === 'loading' ? 'cargando' : state === 'typing' ? 'escribiendo' : 'error'}"
 >
 	<!-- Glow ring for loading state -->
 	{#if state === 'loading'}

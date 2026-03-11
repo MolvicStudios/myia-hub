@@ -40,6 +40,11 @@
 	}
 </script>
 
+<svelte:head>
+	<title>MyIA Hub — Chat con IA multimodelo gratis</title>
+	<meta name="description" content="Chat con ChatGPT, Claude, Gemini, Mistral, DeepSeek, Groq y Ollama desde una sola app. Gratis y sin registro." />
+</svelte:head>
+
 {#if !$activeChat}
 	<WelcomeScreen />
 {:else}
@@ -47,6 +52,7 @@
 		<!-- Chat header -->
 		<div class="flex items-center justify-between px-4 py-2 border-b border-slate-800/50">
 			<div class="flex items-center gap-2 min-w-0">
+				<h1 class="sr-only">Chat — MyIA Hub</h1>
 				<h2 class="text-sm font-medium truncate">{$activeChat.title}</h2>
 			</div>
 			<div class="flex items-center gap-1">

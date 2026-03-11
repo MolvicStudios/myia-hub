@@ -31,12 +31,39 @@
 		<link rel="manifest" href="/manifest.json" />
 
 		<!-- Preconnect -->
+		<link rel="preconnect" href="https://myia-hub-worker.josemmolera.workers.dev" crossorigin />
 		<link rel="dns-prefetch" href="https://myia-hub-worker.josemmolera.workers.dev" />
 		<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
 
-		<!-- Google AdSense -->
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1513893788851225" crossorigin="anonymous"></script>
+		<!-- Google AdSense (loaded conditionally after cookie consent — see CookieBanner.svelte) -->
 		<meta name="google-adsense-account" content="ca-pub-1513893788851225" />
+
+		<!-- hreflang for multilingual SEO -->
+		<link rel="alternate" hreflang="es" href="https://myia.pro" />
+		<link rel="alternate" hreflang="en" href="https://myia.pro?lang=en" />
+		<link rel="alternate" hreflang="x-default" href="https://myia.pro" />
+
+		<!-- Structured Data -->
+		<script type="application/ld+json">
+		{
+			"@context": "https://schema.org",
+			"@type": "SoftwareApplication",
+			"name": "MyIA Hub",
+			"applicationCategory": "UtilitiesApplication",
+			"operatingSystem": "Web",
+			"url": "https://myia.pro",
+			"description": "Hub multimodelo de inteligencia artificial. Chat con ChatGPT, Claude, Gemini, Mistral, DeepSeek, Groq y Ollama desde una sola app.",
+			"offers": {
+				"@type": "Offer",
+				"price": "0",
+				"priceCurrency": "EUR"
+			},
+			"author": {
+				"@type": "Organization",
+				"name": "MyIA"
+			}
+		}
+		</script>
 
 		%sveltekit.head%
 	</head>

@@ -2,6 +2,7 @@
 	import { createChat } from '$lib/stores/chatStore';
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { goto } from '$app/navigation';
+	import AdBlock from '$lib/components/AdBlock.svelte';
 	import type { ModelProvider } from '$lib/types';
 
 	const providers = [
@@ -177,6 +178,10 @@
 	</div>
 
 	<!-- Help section -->
+	<div class="mb-6">
+		<AdBlock format="horizontal" minHeight={100} />
+	</div>
+
 	<div class="text-center text-sm text-slate-500 mb-8">
 		<p>¿Necesitas ayuda? Visita nuestro <a href="https://github.com/MolvicStudios/myia-hub" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">repositorio en GitHub</a></p>
 	</div>

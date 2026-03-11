@@ -13,6 +13,7 @@
 	import { onMount } from 'svelte';
 	import { getModelDef } from '$lib/models/registry';
 	import { i18n } from '$lib/stores/i18nStore';
+	import { locale } from '$lib/stores/i18nStore';
 
 	let { children } = $props();
 	let settingsOpen = $state(false);
@@ -27,10 +28,17 @@
 			$selectedModel = defaultDef.id;
 			$selectedProvider = defaultDef.provider;
 		}
+		// Update html lang attribute when locale changes
+		const unsubLang = locale.subscribe((l) => {
+			document.documentElement.lang = l;
+		});
 		// Listen for open-settings event from keyboard shortcuts
 		function openSettings() { settingsOpen = true; }
 		window.addEventListener('myia:open-settings', openSettings);
-		return () => window.removeEventListener('myia:open-settings', openSettings);
+		return () => {
+			window.removeEventListener('myia:open-settings', openSettings);
+			unsubLang();
+		};
 	});
 </script>
 

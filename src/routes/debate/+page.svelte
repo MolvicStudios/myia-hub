@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import ProviderIcon from '$lib/components/ProviderIcon.svelte';
+	import AdBlock from '$lib/components/AdBlock.svelte';
 	import { i18n } from '$lib/stores/i18nStore';
 	import {
 		ALL_DEBATE_CANDIDATES,
@@ -114,6 +115,11 @@
 		currentTurn = null;
 	}
 </script>
+
+<svelte:head>
+	<title>Debate Multi-Modelo — MyIA Hub</title>
+	<meta name="description" content="Debate entre modelos de IA: hasta 4 modelos debaten entre sí leyendo las respuestas de los demás." />
+</svelte:head>
 
 <div class="flex flex-col h-full">
 	<!-- Header -->
@@ -295,6 +301,10 @@
 				>
 					{$i18n('debate.newDebate')}
 				</button>
+			</div>
+
+			<div class="mt-4">
+				<AdBlock format="horizontal" minHeight={100} />
 			</div>
 		{/if}
 	</div>
