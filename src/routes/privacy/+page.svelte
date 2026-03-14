@@ -38,7 +38,6 @@
 		<p>La Aplicación utiliza:</p>
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li><strong>Almacenamiento local (localStorage/IndexedDB):</strong> Para guardar tus preferencias y chats. Son estrictamente necesarios para el funcionamiento.</li>
-			<li><strong>Cookies de terceros (Google AdSense):</strong> Utilizamos Google AdSense para mostrar anuncios. Google puede utilizar cookies para personalizar anuncios basándose en tu historial de navegación. Puedes obtener más información en la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">política de privacidad de Google</a>.</li>
 		</ul>
 		<p class="mt-2">Para más detalles, consulta nuestra <a href="/cookies" class="text-blue-400 hover:underline">Política de Cookies</a>.</p>
 	</section>
@@ -48,8 +47,7 @@
 		<p>No vendemos ni compartimos tus datos personales. Los únicos terceros que reciben información son:</p>
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li><strong>Proveedores de IA:</strong> Reciben los mensajes que envías para generar respuestas.</li>
-			<li><strong>Cloudflare:</strong> Aloja la aplicación y el proxy. Puede recopilar datos técnicos (IP, user-agent) según su política de privacidad.</li>
-			<li><strong>Google AdSense:</strong> Para la entrega de publicidad contextual.</li>
+			<li><strong>Cloudflare:</strong> Aloja el proxy. Puede recopilar datos técnicos (IP, user-agent) según su política de privacidad.</li>
 		</ul>
 	</section>
 
@@ -59,7 +57,6 @@
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li>Acceder, rectificar o eliminar tus datos.</li>
 			<li>Dado que todos los datos se almacenan localmente, puedes eliminarlos borrando los datos del navegador.</li>
-			<li>Desactivar las cookies de publicidad a través de la configuración de tu navegador o en <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Configuración de anuncios de Google</a>.</li>
 		</ul>
 	</section>
 

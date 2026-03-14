@@ -72,16 +72,10 @@
 				</thead>
 				<tbody class="divide-y divide-slate-700">
 					<tr>
-						<td class="px-4 py-2">Google AdSense</td>
-						<td class="px-4 py-2">Google LLC</td>
-						<td class="px-4 py-2">Publicidad contextual y personalizada</td>
-						<td class="px-4 py-2"><a href="https://policies.google.com/technologies/cookies" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Ver política</a></td>
-					</tr>
-					<tr>
-						<td class="px-4 py-2">Cloudflare</td>
-						<td class="px-4 py-2">Cloudflare Inc.</td>
-						<td class="px-4 py-2">Seguridad, rendimiento y analítica básica</td>
-						<td class="px-4 py-2"><a href="https://www.cloudflare.com/cookie-policy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Ver política</a></td>
+						<td class="px-4 py-2">InMobi Choice (CMP)</td>
+						<td class="px-4 py-2">InMobi / The Moneytizer</td>
+						<td class="px-4 py-2">Gestión del consentimiento (TCF 2.3)</td>
+						<td class="px-4 py-2"><a href="https://www.inmobi.com/privacy-policy" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Ver política</a></td>
 					</tr>
 				</tbody>
 			</table>
@@ -89,13 +83,8 @@
 	</section>
 
 	<section class="mb-8">
-		<h2 class="text-xl font-semibold text-white mb-3">4. Cookies publicitarias de Google</h2>
-		<p>Google AdSense puede utilizar las siguientes cookies:</p>
-		<ul class="list-disc pl-6 mt-2 space-y-1">
-			<li><strong>NID, CONSENT, __gads, __gpi:</strong> Utilizadas para mostrar anuncios relevantes y medir su rendimiento.</li>
-			<li><strong>DSID, IDE:</strong> Cookies de DoubleClick para remarketing y segmentación publicitaria.</li>
-		</ul>
-		<p class="mt-2">Estas cookies permiten a Google y sus socios mostrar anuncios basados en tus visitas a este y otros sitios web.</p>
+		<h2 class="text-xl font-semibold text-white mb-3">4. Gestión del consentimiento</h2>
+		<p>Utilizamos InMobi Choice como plataforma de gestión del consentimiento (CMP) conforme al marco TCF 2.3, lo que te permite controlar qué cookies aceptas.</p>
 	</section>
 
 	<section class="mb-8">
@@ -103,7 +92,6 @@
 		<p>Puedes controlar y gestionar las cookies de varias formas:</p>
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li><strong>Configuración del navegador:</strong> Puedes bloquear o eliminar cookies desde la configuración de tu navegador.</li>
-			<li><strong>Opt-out de Google:</strong> Visita <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Configuración de anuncios de Google</a> para desactivar la personalización de anuncios.</li>
 			<li><strong>Your Online Choices:</strong> Visita <a href="https://www.youronlinechoices.com" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">youronlinechoices.com</a> para gestionar las cookies de muchos proveedores de publicidad.</li>
 			<li><strong>Borrar datos locales:</strong> Para eliminar los datos de la aplicación, puedes usar la opción "Borrar datos de sitio" en la configuración de tu navegador.</li>
 		</ul>

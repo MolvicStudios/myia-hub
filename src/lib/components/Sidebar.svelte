@@ -10,7 +10,6 @@
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { settings, toggleSidebar } from '$lib/stores/settingsStore';
 	import { i18n } from '$lib/stores/i18nStore';
-	import AdBlock from './AdBlock.svelte';
 
 	let editingId = $state<string | null>(null);
 	let editTitle = $state('');
@@ -171,8 +170,4 @@
 		{/if}
 	</div>
 
-	<!-- Sidebar ad (desktop only) -->
-	<div class="hidden md:block shrink-0 px-2 pb-2">
-		<AdBlock format="vertical" minHeight={200} />
-	</div>
 </aside>

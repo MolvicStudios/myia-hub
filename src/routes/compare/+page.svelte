@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Avatar from '$lib/components/Avatar.svelte';
-	import AdBlock from '$lib/components/AdBlock.svelte';
 	import { getAvailableModels } from '$lib/models/registry';
 	import { getApiKey } from '$lib/stores/apiKeyStore';
 	import { routeMessageStreamIndependent } from '$lib/models/router';
@@ -161,8 +160,5 @@
 			</div>
 		{/if}
 
-		<div class="mt-4">
-			<AdBlock format="horizontal" minHeight={100} />
-		</div>
 	</div>
 </main>

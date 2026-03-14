@@ -4,7 +4,6 @@
 	import { selectedModel, selectedProvider } from '$lib/stores/uiStore';
 	import { goto } from '$app/navigation';
 	import Avatar from './Avatar.svelte';
-	import AdBlock from './AdBlock.svelte';
 	import DailyPrompt from './DailyPrompt.svelte';
 	import { i18n } from '$lib/stores/i18nStore';
 	import type { ModelProvider } from '$lib/types';
@@ -61,8 +60,4 @@
 		{$i18n('welcome.hint')}
 	</p>
 
-	<!-- Ad block -->
-	<div class="w-full max-w-lg mt-6">
-		<AdBlock format="horizontal" minHeight={100} />
-	</div>
 </div>

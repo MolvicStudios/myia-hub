@@ -168,7 +168,7 @@ const translations: Record<string, Record<Locale, string>> = {
 	'layout.export': { es: 'Exportar', en: 'Export' },
 
 	// Cookie banner
-	'cookies.banner': { es: 'Usamos cookies propias y de terceros (Google AdSense) para mejorar tu experiencia y mostrar publicidad.', en: 'We use our own and third-party cookies (Google AdSense) to improve your experience and show advertising.' },
+	'cookies.banner': { es: 'Usamos cookies propias y de terceros para mejorar tu experiencia.', en: 'We use our own and third-party cookies to improve your experience.' },
 	'cookies.moreInfo': { es: 'Más información', en: 'More information' },
 	'cookies.reject': { es: 'Rechazar', en: 'Reject' },
 	'cookies.accept': { es: 'Aceptar', en: 'Accept' },

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import ProviderIcon from '$lib/components/ProviderIcon.svelte';
-	import AdBlock from '$lib/components/AdBlock.svelte';
 	import { i18n } from '$lib/stores/i18nStore';
 	import {
 		ALL_DEBATE_CANDIDATES,
@@ -303,9 +302,6 @@
 				</button>
 			</div>
 
-			<div class="mt-4">
-				<AdBlock format="horizontal" minHeight={100} />
-			</div>
 		{/if}
 	</div>
 
