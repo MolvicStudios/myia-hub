@@ -168,11 +168,19 @@ const translations: Record<string, Record<Locale, string>> = {
 	'layout.export': { es: 'Exportar', en: 'Export' },
 
 	// Cookie banner
-	'cookies.banner': { es: 'Usamos cookies propias y de terceros para mejorar tu experiencia.', en: 'We use our own and third-party cookies to improve your experience.' },
+	'cookies.banner': { es: 'Este sitio utiliza cookies técnicas necesarias y cookies publicitarias de Monetag. Puedes aceptar, rechazar o configurar su uso.', en: 'This site uses necessary technical cookies and advertising cookies from Monetag. You can accept, reject or configure their use.' },
 	'cookies.moreInfo': { es: 'Más información', en: 'More information' },
 	'cookies.reject': { es: 'Rechazar', en: 'Reject' },
-	'cookies.accept': { es: 'Aceptar', en: 'Accept' },
+	'cookies.accept': { es: 'Aceptar todas', en: 'Accept all' },
+	'cookies.configure': { es: 'Configurar', en: 'Configure' },
 	'cookies.consent': { es: 'Consentimiento de cookies', en: 'Cookie consent' },
+	'cookies.configTitle': { es: 'Configuración de cookies', en: 'Cookie settings' },
+	'cookies.necessary': { es: 'Técnicas (necesarias)', en: 'Technical (necessary)' },
+	'cookies.necessaryDesc': { es: 'Imprescindibles para el funcionamiento de la aplicación. No se pueden desactivar.', en: 'Essential for the application to work. Cannot be disabled.' },
+	'cookies.advertising': { es: 'Publicitarias (Monetag)', en: 'Advertising (Monetag)' },
+	'cookies.advertisingDesc': { es: 'Permiten mostrar anuncios personalizados y medir su rendimiento.', en: 'Allow showing personalized ads and measuring their performance.' },
+	'cookies.back': { es: 'Volver', en: 'Back' },
+	'cookies.saveConfig': { es: 'Guardar preferencias', en: 'Save preferences' },
 
 	// Compare page
 	'compare.title': { es: 'Comparador de modelos', en: 'Model comparator' },

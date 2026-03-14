@@ -1,5 +1,5 @@
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cmp.inmobi.com https://cdn.ampproject.org; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; frame-src 'self'; connect-src 'self' https://myia-hub-worker.josemmolera.workers.dev https://cmp.inmobi.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.monetag.com https://*.3nbf4.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; frame-src 'self' https://*.monetag.com; connect-src 'self' https://myia-hub-worker.josemmolera.workers.dev https://*.monetag.com https://*.3nbf4.com; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
