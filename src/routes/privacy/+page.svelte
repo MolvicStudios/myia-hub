@@ -60,10 +60,6 @@
 						<td class="px-4 py-2">Comunicación con proveedores de IA</td>
 						<td class="px-4 py-2">Ejecución del servicio solicitado (art. 6.1.b RGPD)</td>
 					</tr>
-					<tr>
-						<td class="px-4 py-2">Publicidad mediante Monetag</td>
-						<td class="px-4 py-2">Consentimiento expreso del usuario (art. 6.1.a RGPD)</td>
-					</tr>
 				</tbody>
 			</table>
 		</div>
@@ -76,9 +72,7 @@
 
 	<section class="mb-8">
 		<h2 class="text-xl font-semibold text-white mb-3">6. Publicidad</h2>
-		<p>MyIA Hub se monetiza exclusivamente a través de <strong>Monetag</strong> (anteriormente PropellerAds). Monetag puede utilizar cookies y tecnologías de seguimiento para mostrar anuncios personalizados o contextuales y medir su rendimiento.</p>
-		<p class="mt-2">La activación de estas cookies se realiza únicamente previo consentimiento expreso del usuario a través del banner de cookies. Puedes consultar la <a href="https://monetag.com/privacy-policy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">política de privacidad de Monetag</a> para más información.</p>
-		<p class="mt-2"><strong>No utilizamos Google AdSense, The Moneytizer ni ninguna otra red publicitaria.</strong></p>
+		<p>MyIA Hub no utiliza redes publicitarias ni muestra anuncios. No se instalan cookies publicitarias ni tecnologías de seguimiento con fines comerciales.</p>
 	</section>
 
 	<section class="mb-8">
@@ -87,7 +81,6 @@
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li><strong>Proveedores de IA:</strong> Reciben los mensajes que envías para generar respuestas (OpenAI, Anthropic, Google, Mistral, DeepSeek, Groq).</li>
 			<li><strong>Cloudflare:</strong> Aloja el proxy de la aplicación. Puede recopilar datos técnicos (IP, user-agent) según su <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">política de privacidad</a>.</li>
-			<li><strong>Monetag:</strong> Red publicitaria que puede establecer cookies publicitarias si aceptas su uso.</li>
 		</ul>
 	</section>
 

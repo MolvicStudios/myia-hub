@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { settings, updateSetting } from '$lib/stores/settingsStore';
+	import { onMount } from 'svelte';
+	import { i18n } from '$lib/stores/i18nStore';
 
 	let visible = $state(false);
 	let showConfig = $state(false);
-	let analyticsConsent = $state(false);
-	let adConsent = $state(false);
 
 	function checkConsent() {
 		try {
@@ -26,15 +25,11 @@
 	}
 
 	function saveConfig() {
-		const value = adConsent ? 'accepted' : 'rejected';
-		try { localStorage.setItem('myia_cookie_consent', value); } catch {}
+		try { localStorage.setItem('myia_cookie_consent', 'accepted'); } catch {}
 		visible = false;
 	}
 
-	import { onMount } from 'svelte';
 	onMount(checkConsent);
-
-	import { i18n } from '$lib/stores/i18nStore';
 </script>
 
 {#if visible}
@@ -78,11 +73,6 @@
 					<label class="flex items-center gap-3 text-sm text-slate-300">
 						<input type="checkbox" checked disabled class="accent-blue-500" />
 						<span><strong>{$i18n('cookies.necessary')}</strong> — {$i18n('cookies.necessaryDesc')}</span>
-					</label>
-
-					<label class="flex items-center gap-3 text-sm text-slate-300">
-						<input type="checkbox" bind:checked={adConsent} class="accent-blue-500" />
-						<span><strong>{$i18n('cookies.advertising')}</strong> — {$i18n('cookies.advertisingDesc')}</span>
 					</label>
 
 					<div class="flex gap-2 justify-end">

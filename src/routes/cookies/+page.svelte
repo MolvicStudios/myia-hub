@@ -63,37 +63,14 @@
 	</section>
 
 	<section class="mb-8">
-		<h2 class="text-xl font-semibold text-white mb-3">4. Cookies de terceros (publicidad)</h2>
-		<p>MyIA Hub se monetiza exclusivamente mediante la red publicitaria <strong>Monetag</strong> (anteriormente PropellerAds). Monetag y sus socios tecnológicos pueden instalar cookies o utilizar tecnologías de seguimiento en tu navegador con los siguientes fines:</p>
-
-		<div class="mt-4 overflow-x-auto">
-			<table class="w-full text-sm border border-slate-700 rounded-lg">
-				<thead class="bg-slate-800">
-					<tr>
-						<th class="px-4 py-2 text-left text-white">Proveedor</th>
-						<th class="px-4 py-2 text-left text-white">Propósito</th>
-						<th class="px-4 py-2 text-left text-white">Tipo</th>
-						<th class="px-4 py-2 text-left text-white">Más información</th>
-					</tr>
-				</thead>
-				<tbody class="divide-y divide-slate-700">
-					<tr>
-						<td class="px-4 py-2">Monetag</td>
-						<td class="px-4 py-2">Mostrar anuncios personalizados o contextuales, medición de rendimiento publicitario</td>
-						<td class="px-4 py-2">Publicitaria</td>
-						<td class="px-4 py-2"><a href="https://monetag.com/privacy-policy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">Política de privacidad</a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-		<p class="mt-3 text-sm text-slate-400">Estas cookies requieren tu consentimiento previo. No se activarán hasta que aceptes su uso a través del banner de cookies.</p>
+		<h2 class="text-xl font-semibold text-white mb-3">4. Cookies de terceros</h2>
+		<p>MyIA Hub no utiliza cookies de terceros ni redes publicitarias. Únicamente se emplean las tecnologías de almacenamiento local descritas en la sección anterior.</p>
 	</section>
 
 	<section class="mb-8">
 		<h2 class="text-xl font-semibold text-white mb-3">5. Base legal del tratamiento</h2>
 		<ul class="list-disc pl-6 mt-2 space-y-1">
 			<li><strong>Cookies técnicas/necesarias:</strong> Interés legítimo y necesidad para la prestación del servicio (art. 6.1.f RGPD; art. 22.2 LSSI-CE).</li>
-			<li><strong>Cookies publicitarias (Monetag):</strong> Consentimiento expreso del usuario (art. 6.1.a RGPD; art. 22.1 LSSI-CE).</li>
 		</ul>
 	</section>
 
@@ -111,7 +88,7 @@
 
 	<section class="mb-8">
 		<h2 class="text-xl font-semibold text-white mb-3">7. Transferencias internacionales de datos</h2>
-		<p>Monetag puede transferir datos a servidores situados fuera del Espacio Económico Europeo. En tal caso, se aplican las garantías previstas en el RGPD (cláusulas contractuales tipo, decisiones de adecuación, etc.). Puedes consultar más detalles en la <a href="https://monetag.com/privacy-policy/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:underline">política de privacidad de Monetag</a>.</p>
+		<p>MyIA Hub no realiza transferencias internacionales de datos por cuenta propia. Los proveedores de IA a los que envías tus mensajes pueden estar ubicados fuera del Espacio Económico Europeo. Consulta las políticas de privacidad de cada proveedor para más información.</p>
 	</section>
 
 	<section class="mb-8">
