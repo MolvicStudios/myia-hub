@@ -25,6 +25,7 @@
 	</div>
 
 	<h1 class="text-2xl font-bold mb-2">MyIA Hub</h1>
+	<span style="display:block;font-size:11px;font-weight:400;opacity:0.6;letter-spacing:0.03em;line-height:1;">by <a href="https://molvicstudios.pro" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">MolvicStudios.pro</a></span>
 	<p class="text-slate-400 text-sm mb-8 text-center max-w-md">
 		{$i18n('welcome.subtitle')}
 	</p>

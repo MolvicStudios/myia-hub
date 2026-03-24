@@ -116,18 +116,24 @@
 		</main>
 
 		<!-- Footer legal links -->
-		<footer class="shrink-0 flex items-center justify-center gap-4 px-4 py-1.5 text-xs text-slate-500 border-t border-slate-800/50">
-			<a href="/tutorial" class="hover:text-slate-300 transition-colors">{$i18n('footer.tutorial')}</a>
-			<span>·</span>
-			<a href="/compare" class="hover:text-slate-300 transition-colors">{$i18n('footer.compare')}</a>
-			<span>·</span>
-			<a href="/debate" class="hover:text-slate-300 transition-colors">{$i18n('footer.debate')}</a>
-			<span>·</span>
-			<a href="mailto:molvicstudios@outlook.com?subject=Feedback%20MyIA%20Hub" class="hover:text-slate-300 transition-colors">Feedback</a>
-			<span>·</span>
-			<a href="/privacy" class="hover:text-slate-300 transition-colors">{$i18n('footer.privacy')}</a>
-			<span>·</span>
-			<a href="/cookies" class="hover:text-slate-300 transition-colors">{$i18n('footer.cookies')}</a>
+		<footer class="shrink-0 flex flex-col items-center justify-center px-4 py-1.5 text-xs text-slate-500 border-t border-slate-800/50">
+			<div class="flex items-center justify-center gap-4">
+				<a href="/tutorial" class="hover:text-slate-300 transition-colors">{$i18n('footer.tutorial')}</a>
+				<span>·</span>
+				<a href="/compare" class="hover:text-slate-300 transition-colors">{$i18n('footer.compare')}</a>
+				<span>·</span>
+				<a href="/debate" class="hover:text-slate-300 transition-colors">{$i18n('footer.debate')}</a>
+				<span>·</span>
+				<a href="mailto:molvicstudios@outlook.com?subject=Feedback%20MyIA%20Hub" class="hover:text-slate-300 transition-colors">Feedback</a>
+				<span>·</span>
+				<a href="/privacy" class="hover:text-slate-300 transition-colors">{$i18n('footer.privacy')}</a>
+				<span>·</span>
+				<a href="/cookies" class="hover:text-slate-300 transition-colors">{$i18n('footer.cookies')}</a>
+			</div>
+			<p style="font-size:11px;opacity:0.5;text-align:center;margin-top:4px;">
+				© 2026 <a href="https://molvicstudios.pro" target="_blank" rel="noopener" style="color:inherit;">MolvicStudios.pro</a> · 
+				<a href="mailto:molvicstudios@outlook.com" style="color:inherit;">molvicstudios@outlook.com</a>
+			</p>
 		</footer>
 	</div>
 

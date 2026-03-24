@@ -41,7 +41,7 @@
 </script>
 
 <svelte:head>
-	<title>MyIA Hub — Chat con IA multimodelo gratis</title>
+	<title>MyIA Hub — Chat con IA multimodelo gratis y sin registro</title>
 	<meta name="description" content="Chat con ChatGPT, Claude, Gemini, Mistral, DeepSeek, Groq y Ollama desde una sola app. Gratis y sin registro." />
 </svelte:head>
 
