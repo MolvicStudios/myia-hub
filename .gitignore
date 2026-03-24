@@ -9,3 +9,10 @@ dist/
 .DS_Store
 *.local
 .vite/
+# Cloudflare Types
+/worker-configuration.d.ts
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
